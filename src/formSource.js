@@ -1,4 +1,65 @@
-export const userInputs = [
+export const newUserInputs = [
+    {
+      id: 1,
+      label: "District",
+      type: "select",
+      placeholder: "-- District --",
+    },
+    {
+      id: 2,
+      label: "UM/RM",
+      type: "select",
+      placeholder: "-- Palika --",
+    },
+    {
+      id: 3,
+      label: "Ward No.",
+      type: "text",
+      placeholder: " 1 ",
+    },
+    {
+      id: 4,
+      label: "Village Name",
+      type: "text",
+      placeholder: "Narchyang",
+    },
+    {
+      id: 5,
+      label: "Club Name",
+      type: "text",
+      placeholder: "Annapurna Youth Club",
+    },
+    {
+      id: 6,
+      label: "Email",
+      type: "mail",
+      placeholder: "javalok2011@gmail.com",
+    },
+    {
+      id: 7,
+      label: "Phone",
+      type: "text",
+      placeholder: "+1 234 567 89",
+    },
+    {
+      id: 8,
+      label: "Password",
+      type: "password",
+    },
+    {
+      id: 9,
+      label: "Address",
+      type: "text",
+      placeholder: "Narchyang. 216 NewYork",
+    },
+    // {
+    //   id: 10,
+    //   label: "Admin Type",
+    //   type: "select",
+    //   placeholder: "--Admin Type--",
+    // },
+  ];
+ export const userInputs = [
     {
       id: 1,
       label: "Username",
