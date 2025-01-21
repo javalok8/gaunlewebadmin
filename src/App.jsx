@@ -1,6 +1,7 @@
 import Home from "./admin/pages/home/Home";
 import Login from "./admin/pages/login/Login";
 import List from "./admin/pages/list/List";
+import UserList from "./admin/pages/userlist/UserList";
 import Single from "./admin/pages/single/Single";
 import New from "./admin/pages/new/New";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
@@ -20,8 +21,9 @@ function App() {
           <Route path="/">
             <Route index element={<Home />} />
             <Route path="login" element={<Login />} />
+
             <Route path="users">
-              <Route index element={<List />} />
+              <Route index element={<UserList />} />
               <Route path=":userId" element={<Single />} />
               <Route
                 path="newUser"
@@ -30,6 +32,7 @@ function App() {
                 }
               />
             </Route>
+
             <Route path="products">
               <Route index element={<List />} />
               <Route path=":productId" element={<Single />} />

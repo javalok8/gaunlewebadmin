@@ -1,8 +1,7 @@
 import "./userlist.scss";
 import Sidebar from "../../components/sidebar/Sidebar";
 import Navbar from "../../components/navbar/Navbar";
-import axios from "axios";
-import DataTable from "../../components/datatable/DataTable";
+import UserTable from "../usertable/UserTable";
 
 const UserList = () => {
   return (
@@ -10,7 +9,7 @@ const UserList = () => {
       <Sidebar />
       <div className="listContainer">
         <Navbar />
-        <DataTable />
+        <UserTable />
       </div>
     </div>
   );

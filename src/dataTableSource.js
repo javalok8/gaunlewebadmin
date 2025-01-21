@@ -1,3 +1,184 @@
+//columns for userList
+export const userListColumns = [
+  { field: "id", headerName: "ID", width: 70 },
+  {
+    field: "villageImage",
+    headerName: "User",
+    width: 230,
+    renderCell: (params) => {
+      return (
+        <div className="cellWithImg">
+          <img className="cellImg" src={params.row.villageImage} alt="avatar" />
+          {params.row.villageName}
+        </div>
+      );
+    },
+  },
+  {
+    field: "clubName",
+    headerName: "Club Name",
+    width: 250,
+  },
+
+  {
+    field: "district",
+    headerName: "District",
+    width: 100,
+  },
+  {
+    field: "palika",
+    headerName: "UM/RM",
+    width: 200,
+  },
+  // {
+  //   field: "wardNo",
+  //   headerName: "Ward No.",
+  //   width: 70,
+  // },
+  // {
+  //   field: "email",
+  //   headerName: "Email",
+  //   width: 200,
+  // },
+]
+
+//temporary userList data
+export const userListRows = [
+  {
+    id: 1,
+    villageImage: "https://images.pexels.com/photos/1820770/pexels-photo-1820770.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500",
+    villageName: "Narchyang",
+    clubName: "Doba Youth Club",
+    district: "Kathmandu",
+    palika: "Annapurna Gaunpalika",
+    wardNo: "1",
+    email: "1snow@gmail.com",
+    phoneNumber: "1234567890",
+  },
+  {
+    id: 2,
+    villageImage: "https://images.pexels.com/photos/1820770/pexels-photo-1820770.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500",
+    villageName: "Narchyang",
+    clubName: "Annapurna Youth Club",
+    district: "Kathmandu",
+    palika: "Kathmandu",
+    wardNo: "1",
+    email: "1snow@gmail.com",
+    phoneNumber: "1234567890",
+  },
+  {
+    id: 3,
+    villageImage: "https://images.pexels.com/photos/1820770/pexels-photo-1820770.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500",
+    villageName: "Narchyang",
+    clubName: "Annapurna Youth Club",
+    district: "Kathmandu",
+    palika: "Kathmandu",
+    wardNo: "1",
+    email: "1snow@gmail.com",
+    phoneNumber: "1234567890",
+  },
+  {
+    id: 4,
+    villageImage: "https://images.pexels.com/photos/1820770/pexels-photo-1820770.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500",
+    villageName: "Narchyang",
+    clubName: "Annapurna Youth Club",
+    district: "Kathmandu",
+    palika: "Kathmandu",
+    wardNo: "1",
+    email: "1snow@gmail.com",
+    phoneNumber: "1234567890",
+  },
+  {
+    id: 5,
+    villageImage: "https://images.pexels.com/photos/1820770/pexels-photo-1820770.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500",
+    villageName: "Narchyang",
+    clubName: "Annapurna Youth Club",
+    district: "Kathmandu",
+    palika: "Kathmandu",
+    wardNo: "1",
+    email: "1snow@gmail.com",
+    phoneNumber: "1234567890",
+  },
+  {
+    id: 6,
+    villageImage: "https://images.pexels.com/photos/1820770/pexels-photo-1820770.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500",
+    villageName: "Narchyang",
+    clubName: "Annapurna Youth Club",
+    district: "Kathmandu",
+    palika: "Kathmandu",
+    wardNo: "1",
+    email: "1snow@gmail.com",
+    phoneNumber: "1234567890",
+  },
+  {
+    id: 7,
+    villageImage: "https://images.pexels.com/photos/1820770/pexels-photo-1820770.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500",
+    villageName: "Narchyang",
+    clubName: "Annapurna Youth Club",
+    district: "Kathmandu",
+    palika: "Kathmandu",
+    wardNo: "1",
+    email: "1snow@gmail.com",
+    phoneNumber: "1234567890",
+  },
+  {
+    id: 8,
+    villageImage: "https://images.pexels.com/photos/1820770/pexels-photo-1820770.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500",
+    villageName: "Narchyang",
+    clubName: "Annapurna Youth Club",
+    district: "Kathmandu",
+    palika: "Kathmandu",
+    wardNo: "1",
+    email: "1snow@gmail.com",
+    phoneNumber: "1234567890",
+  },
+  {
+    id: 9,
+    villageImage: "https://images.pexels.com/photos/1820770/pexels-photo-1820770.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500",
+    villageName: "Narchyang",
+    clubName: "Annapurna Youth Club",
+    district: "Kathmandu",
+    palika: "Kathmandu",
+    wardNo: "1",
+    email: "1snow@gmail.com",
+    phoneNumber: "1234567890",
+  },
+  {
+    id: 10,
+    villageImage: "https://images.pexels.com/photos/1820770/pexels-photo-1820770.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500",
+    villageName: "Narchyang",
+    clubName: "Annapurna Youth Club",
+    district: "Kathmandu",
+    palika: "Kathmandu",
+    wardNo: "1",
+    email: "1snow@gmail.com",
+    phoneNumber: "1234567890",
+  },
+  {
+    id: 11,
+    villageImage: "https://images.pexels.com/photos/1820770/pexels-photo-1820770.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500",
+    villageName: "Narchyang",
+    clubName: "Annapurna Youth Club",
+    district: "Kathmandu",
+    palika: "Kathmandu",
+    wardNo: "1",
+    email: "1snow@gmail.com",
+    phoneNumber: "1234567890",
+  },
+  {
+    id: 12,
+    villageImage: "https://images.pexels.com/photos/1820770/pexels-photo-1820770.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500",
+    villageName: "Narchyang",
+    clubName: "Annapurna Youth Club",
+    district: "Kathmandu",
+    palika: "Kathmandu",
+    wardNo: "1",
+    email: "1snow@gmail.com",
+    phoneNumber: "1234567890",
+  },
+   
+];
+
 export const userColumns = [
     { field: "id", headerName: "ID", width: 70 },
     {

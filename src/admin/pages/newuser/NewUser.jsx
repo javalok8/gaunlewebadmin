@@ -4,9 +4,14 @@ import Navbar from "../../components/navbar/Navbar";
 import DriveFolderUploadOutlinedIcon from "@mui/icons-material/DriveFolderUploadOutlined";
 import { useState } from "react";
 import data from "../../../data/data";
+// import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const NewUser = ({ inputs, title }) => {
+  const navigate = useNavigate(); // Initialize navigate
+
   const [formData, setFormData] = useState({
     district: "",
     palika: "",
@@ -127,20 +132,44 @@ const NewUser = ({ inputs, title }) => {
       );
 
       if (response.status === 201) {
-        setBackEndError("SUCCESS TO SUBMIT DATA.");
+        // toast.success("Success Notification!", {
+        //   position: toast.POSITION.TOP_CENTER,
+        //   autoClose: false,
+        //   draggable: true,
+        // });
+        // //to clear fields after sucessful submission
+        // setFormData({
+        //   district: "",
+        //   palika: "",
+        //   wardNo: "",
+        //   villageName: "",
+        //   clubName: "",
+        //   villageImage: "",
+        //   clubIcon: "",
+        //   email: "",
+        //   phoneNumber: "",
+        //   password: "",
+        //   address: "",
+        // });
+        setBackEndError(<font color="green">Success TO SUBMIT DATA.</font>);
+        navigate("/users");
       } else if (response.status === 401) {
         //alert or show error message
-        setBackEndError("USER ALREADY EXISTS.");
+        setBackEndError(<font color="red">USER ALREADY EXISTS.</font>);
       } else if (response.status === 400) {
         //alert or show error message
-        setBackEndError("ALL THE FIELDS ARE REQUIRED.");
+        setBackEndError(<font color="red">ALL THE FIELDS ARE REQUIRED.</font>);
       } else if (response.status === 402) {
         //alert or show error message
-        setBackEndError("INVALID USER DATA.");
+        setBackEndError(<font color="red">INVALID USER DATA.</font>);
       }
     } catch (error) {
       // alert("Failed to submit data there might be issues in Server.");
-      setBackEndError("Failed to submit data there might be issues in Server.");
+      setBackEndError(
+        <font color="red">
+          Failed to submit data there might be issues in Server.
+        </font>
+      );
     }
   };
 
