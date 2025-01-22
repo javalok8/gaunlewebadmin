@@ -1,6 +1,7 @@
 import "./sidebar.scss";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
+import NewspaperIcon from "@mui/icons-material/Newspaper";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import CreditCardIcon from "@mui/icons-material/CreditCard";
 import StoreIcon from "@mui/icons-material/Store";
@@ -37,6 +38,12 @@ const Sidebar = () => {
             <li>
               <PersonOutlineIcon className="icon" />
               <span>Users</span>
+            </li>
+          </Link>
+          <Link to="/news" style={{ textDecoration: "none" }}>
+            <li>
+              <NewspaperIcon className="icon" />
+              <span>News</span>
             </li>
           </Link>
           <Link to="/products" style={{ textDecoration: "none" }}>

@@ -2,33 +2,49 @@ import "./newUser.scss";
 import Sidebar from "../../components/sidebar/Sidebar";
 import Navbar from "../../components/navbar/Navbar";
 import DriveFolderUploadOutlinedIcon from "@mui/icons-material/DriveFolderUploadOutlined";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import data from "../../../data/data";
 // import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+// import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const NewUser = ({ inputs, title }) => {
+  const BASE_URL = process.env.REACT_APP_BASE_URL;
   const navigate = useNavigate(); // Initialize navigate
 
+  const { state } = useLocation(); // Access state passed from navigate
+  const userData = state?.user || {}; // Extract user data or use an empty object
+
+  //alert("userData in NewUser " + JSON.stringify(userData));
+
+  // Prepopulate formData with userData if editing
   const [formData, setFormData] = useState({
-    district: "",
-    palika: "",
-    wardNo: "",
-    villageName: "",
-    clubName: "",
-    villageImage: "",
-    clubIcon: "",
-    email: "",
-    phoneNumber: "",
-    password: "",
-    adminType: "Admin",
-    address: "",
+    district: userData.district || "",
+    palika: userData.palika || "",
+    wardNo: userData.wardNo || "",
+    villageName: userData.villageName || "",
+    clubName: userData.clubName || "",
+    villageImage: userData.villageImage || "",
+    clubIcon: userData.clubIcon || "",
+    email: userData.email || "",
+    phoneNumber: userData.phoneNumber || "",
+    password: userData.password || "",
+    adminType: userData.adminType || "Admin",
+    address: userData.address || "",
+    editedDate: "",
   });
 
-  const [villageImage, setVillageImage] = useState("");
-  const [clubIcon, setClubIcon] = useState("");
+  const [villageImage, setVillageImage] = useState(userData.villageImage || "");
+  const [clubIcon, setClubIcon] = useState(userData.clubIcon || "");
+
+  useEffect(() => {
+    if (userData.district) {
+      // Populate palikas based on district
+      const district = data.districts.find((d) => d.name === userData.district);
+      setPalikas(district ? district.palikas : []);
+    }
+  }, [userData.district]);
 
   const [palikas, setPalikas] = useState([]);
 
@@ -120,38 +136,36 @@ const NewUser = ({ inputs, title }) => {
     if (villageImage) formDataToSubmit.append("villageImage", villageImage);
     if (clubIcon) formDataToSubmit.append("clubIcon", clubIcon);
 
+    /**
+     *
+     * choosing URL whether to update or add user
+     *
+     */
+    const MAIN_URL = userData._id
+      ? `${BASE_URL}/api/users/updateAdminUser/${userData._id}`
+      : `${BASE_URL}/api/users/registerAdminUser`;
+
     try {
-      const response = await axios.post(
-        "http://localhost:5000/api/users/registerAdminUser",
-        formDataToSubmit,
-        {
+      let response = "";
+      if (userData._id) {
+        response = await axios.put(MAIN_URL, formDataToSubmit, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
-        }
-      );
+        });
+      } else {
+        response = await axios.post(MAIN_URL, formDataToSubmit, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+      }
 
       if (response.status === 201) {
-        // toast.success("Success Notification!", {
-        //   position: toast.POSITION.TOP_CENTER,
-        //   autoClose: false,
-        //   draggable: true,
-        // });
-        // //to clear fields after sucessful submission
-        // setFormData({
-        //   district: "",
-        //   palika: "",
-        //   wardNo: "",
-        //   villageName: "",
-        //   clubName: "",
-        //   villageImage: "",
-        //   clubIcon: "",
-        //   email: "",
-        //   phoneNumber: "",
-        //   password: "",
-        //   address: "",
-        // });
-        setBackEndError(<font color="green">Success TO SUBMIT DATA.</font>);
+        setBackEndError(<font color="green">Success TO ADD DATA.</font>);
+        navigate("/users");
+      } else if (response.status === 200) {
+        setBackEndError(<font color="green">Success TO UPDATE DATA.</font>);
         navigate("/users");
       } else if (response.status === 401) {
         //alert or show error message
@@ -186,21 +200,41 @@ const NewUser = ({ inputs, title }) => {
             <img
               src={
                 villageImage
+                  ? villageImage instanceof File
+                    ? URL.createObjectURL(villageImage) // If the image is selected from the computer
+                    : `${BASE_URL}${villageImage}` // If it's an updated image URL
+                  : "https://icon-library.com/images/no-image-icon/no-image-icon-0.jpg" // Default image if no image exists
+              }
+              alt=""
+            />
+            {/* <img
+              src={
+                villageImage
                   ? URL.createObjectURL(villageImage)
                   : "https://icon-library.com/images/no-image-icon/no-image-icon-0.jpg"
               }
               alt=""
-            />
+            /> */}
           </div>
           <div className="left-logo">
             <img
+              src={
+                clubIcon
+                  ? clubIcon instanceof File
+                    ? URL.createObjectURL(clubIcon) // If the image is selected from the computer
+                    : `${BASE_URL}${clubIcon}` // If it's an updated image URL
+                  : "https://icon-library.com/images/no-image-icon/no-image-icon-0.jpg" // Default image if no image exists
+              }
+              alt=""
+            />
+            {/* <img
               src={
                 clubIcon
                   ? URL.createObjectURL(clubIcon)
                   : "https://icon-library.com/images/no-image-icon/no-image-icon-0.jpg"
               }
               alt=""
-            />
+            /> */}
           </div>
           <div className="right">
             <form onSubmit={handleSubmit} encType="multipart/form-data">
@@ -240,7 +274,11 @@ const NewUser = ({ inputs, title }) => {
 
               <div className="formInput">
                 <label>District</label>
-                <select name="district" onChange={handleDistrictChange}>
+                <select
+                  name="district"
+                  value={formData.district}
+                  onChange={handleDistrictChange}
+                >
                   <option value="">-- District --</option>
                   {data.districts.map((district) => (
                     <option key={district.name} value={district.name}>
@@ -254,7 +292,11 @@ const NewUser = ({ inputs, title }) => {
               </div>
               <div className="formInput">
                 <label>UM/RM</label>
-                <select name="palika" onChange={handlePalikaChange}>
+                <select
+                  name="palika"
+                  value={formData.palika}
+                  onChange={handlePalikaChange}
+                >
                   <option value="">-- Palika --</option>
                   {palikas.map((palika) => (
                     <option key={palika.name} value={palika.name}>
@@ -272,6 +314,7 @@ const NewUser = ({ inputs, title }) => {
                   name="wardNo"
                   type="number"
                   placeholder="1"
+                  value={formData.wardNo}
                   onChange={handleInputChange}
                 />
                 {errors.wardNo && (
@@ -284,6 +327,7 @@ const NewUser = ({ inputs, title }) => {
                   name="villageName"
                   type="text"
                   placeholder="Narchyang"
+                  value={formData.villageName}
                   onChange={handleInputChange}
                 />
                 {errors.villageName && (
@@ -296,6 +340,7 @@ const NewUser = ({ inputs, title }) => {
                   name="clubName"
                   type="text"
                   placeholder="Annapurna Youth Club"
+                  value={formData.clubName}
                   onChange={handleInputChange}
                 />
                 {errors.clubName && (
@@ -308,6 +353,7 @@ const NewUser = ({ inputs, title }) => {
                   name="email"
                   type="text"
                   placeholder="javalok2011@gmail.com"
+                  value={formData.email}
                   onChange={handleInputChange}
                 />
                 {errors.email && (
@@ -320,6 +366,7 @@ const NewUser = ({ inputs, title }) => {
                   name="phoneNumber"
                   type="number"
                   placeholder="+1 234 567 89"
+                  value={formData.phoneNumber}
                   onChange={handleInputChange}
                 />
                 {errors.phoneNumber && (
@@ -344,6 +391,7 @@ const NewUser = ({ inputs, title }) => {
                   type="text"
                   name="address"
                   placeholder="Narchyang. 216 NewYork"
+                  value={formData.address}
                   onChange={handleInputChange}
                 />
                 {errors.address && (

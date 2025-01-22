@@ -1,22 +1,20 @@
 import "./userTable.scss";
 import { DataGrid } from "@mui/x-data-grid";
 // import { userListColumns, userListRows } from "../../../dataTableSource";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
 const UserTable = () => {
+  const BASE_URL = process.env.REACT_APP_BASE_URL;
+  const navigate = useNavigate();
   const [data, setData] = useState([]);
 
   // Fetch all users
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const res = await axios.get(
-          "http://localhost:5000/api/users/findAllAdminUser"
-        );
-
-        alert(JSON.stringify(res.data));
+        const res = await axios.get(BASE_URL + "/api/users/findAllAdminUser");
 
         setData(res.data);
       } catch (err) {
@@ -27,17 +25,32 @@ const UserTable = () => {
   }, []);
 
   const handleDelete = async (id) => {
-    alert(" lokendra id to delete=====>" + id);
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this user?"
+    );
+    if (!confirmDelete) {
+      return; // Exit if the user cancels
+    }
     try {
       const response = await axios.delete(
-        `http://localhost:5000/api/users/deleteAdminUser/${id}`
+        BASE_URL + `/api/users/deleteAdminUser/${id}`
       );
-      alert(response.data.message);
-
-      setData(data.filter((item) => item._id !== id));
+      if (response.status === 200) {
+        alert("User deleted successfully");
+        setData(data.filter((item) => item._id !== id));
+      }
     } catch (err) {
       console.error(err);
     }
+  };
+  const handleUpdate = (userData) => {
+    const confirmUpdate = window.confirm(
+      "Are you sure you want to update this user?"
+    );
+    if (!confirmUpdate) {
+      return; // Exit if the user cancels
+    }
+    navigate("/users/newUser", { state: { user: userData } }); // Pass user data to NewUser
   };
 
   const userListColumns = [
@@ -51,7 +64,7 @@ const UserTable = () => {
           <div className="cellWithImg">
             <img
               className="cellImg"
-              src={`http://localhost:5000${params.row.villageImage}`}
+              src={`${BASE_URL}${params.row.villageImage}`}
               alt="avatar"
             />
             {params.row.villageName}
@@ -84,12 +97,15 @@ const UserTable = () => {
       renderCell: (params) => {
         return (
           <div className="cellAction">
-            <Link
-              to={`/users/${params.row._id}`}
-              style={{ textDecoration: "none" }}
-            >
-              <div className="viewButton">Edit</div>
+            <Link to="/users/newUser" style={{ textDecoration: "none" }}>
+              <div className="viewButton">Add</div>
             </Link>
+            <div
+              className="viewButton"
+              onClick={() => handleUpdate(params.row)} // Pass row data
+            >
+              Update
+            </div>
             <div
               className="deleteButton"
               onClick={() => handleDelete(params.row._id)}

@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import "./login.scss";
 
 const Login = () => {
+  const BASE_URL = process.env.REACT_APP_BASE_URL;
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
@@ -32,16 +33,13 @@ const Login = () => {
 
     try {
       // Backend API call
-      const response = await fetch(
-        "http://127.0.0.1:3000/api/users/loginAdminUser",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ email, password }),
-        }
-      );
+      const response = await fetch(BASE_URL + "/api/users/loginAdminUser", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
 
       const data = await response.json();
 
