@@ -9,7 +9,11 @@ import { productInputs, userInputs, newUserInputs } from "./formSource";
 import "./style/dark.scss";
 import { useContext } from "react";
 import { DarkModeContext } from "./context/darkModeContext";
-import NewUser from "./admin/pages/newuser/NewUser";
+import NewUser from "./admin/pages/usernew/NewUser";
+import NewsList from "./admin/pages/newslist/NewsList";
+import NewsNew from "./admin/pages/newsnew/NewsNew";
+import GharList from "./admin/pages/gharlist/GharList";
+import NewGhar from "./admin/pages/gharnew/NewGhar";
 
 function App() {
   const { darkMode } = useContext(DarkModeContext);
@@ -22,6 +26,7 @@ function App() {
             <Route index element={<Home />} />
             <Route path="login" element={<Login />} />
 
+            {/* User Routes */}
             <Route path="users">
               <Route index element={<UserList />} />
               <Route path=":userId" element={<Single />} />
@@ -30,6 +35,23 @@ function App() {
                 element={
                   <NewUser inputs={newUserInputs} title="Add New User" />
                 }
+              />
+            </Route>
+            {/* News Routes */}
+            <Route path="news">
+              <Route index element={<NewsList />} />
+              <Route
+                path="newsNew"
+                element={<NewsNew inputs={newUserInputs} title="Add News" />}
+              />
+            </Route>
+
+            {/* HomeStay Routes */}
+            <Route path="ghar">
+              <Route index element={<GharList />} />
+              <Route
+                path="newGhar"
+                element={<NewGhar inputs={newUserInputs} title="Add Home" />}
               />
             </Route>
 

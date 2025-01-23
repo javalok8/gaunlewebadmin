@@ -4,8 +4,6 @@ import Navbar from "../../components/navbar/Navbar";
 import DriveFolderUploadOutlinedIcon from "@mui/icons-material/DriveFolderUploadOutlined";
 import { useEffect, useState } from "react";
 import data from "../../../data/data";
-// import { toast } from "react-toastify";
-// import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import { useNavigate, useLocation } from "react-router-dom";
 
@@ -16,9 +14,7 @@ const NewUser = ({ inputs, title }) => {
   const { state } = useLocation(); // Access state passed from navigate
   const userData = state?.user || {}; // Extract user data or use an empty object
 
-  //alert("userData in NewUser " + JSON.stringify(userData));
-
-  // Prepopulate formData with userData if editing
+  // populate formData with userData if editing
   const [formData, setFormData] = useState({
     district: userData.district || "",
     palika: userData.palika || "",

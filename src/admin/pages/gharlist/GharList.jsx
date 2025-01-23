@@ -1,18 +1,18 @@
-import "./userList.scss";
+import "./gharList.scss";
 import Sidebar from "../../components/sidebar/Sidebar";
 import Navbar from "../../components/navbar/Navbar";
-import UserTable from "../usertable/UserTable";
+import GharTable from "../ghartable/GharTable";
 
-const UserList = () => {
+const GharList = () => {
   return (
     <div className="list">
       <Sidebar />
       <div className="listContainer">
         <Navbar />
-        <UserTable />
+        <GharTable />
       </div>
     </div>
   );
 };
 
-export default UserList;
+export default GharList;

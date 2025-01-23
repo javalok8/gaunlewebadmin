@@ -1,63 +1,62 @@
-import "./userTable.scss";
+import "./gharTable.scss";
 import { DataGrid } from "@mui/x-data-grid";
-// import { userListColumns, userListRows } from "../../../dataTableSource";
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
-const UserTable = () => {
+const GharTable = () => {
   const BASE_URL = process.env.REACT_APP_BASE_URL;
   const navigate = useNavigate();
   const [data, setData] = useState([]);
 
-  // Fetch all users
+  // Fetch all Ghar
   useEffect(() => {
-    const fetchUsers = async () => {
+    const fetchGhar = async () => {
       try {
-        const res = await axios.get(BASE_URL + "/api/users/findAllAdminUser");
+        const res = await axios.get(BASE_URL + "/api/ghar/findAllGhar");
 
         setData(res.data);
       } catch (err) {
         console.error(err);
       }
     };
-    fetchUsers();
+    fetchGhar();
   }, []);
 
   const handleDelete = async (id) => {
     const confirmDelete = window.confirm(
-      "Are you sure you want to delete this USER?"
+      "Are you sure you want to delete this Ghar?"
     );
     if (!confirmDelete) {
-      return; // Exit if the user cancels
+      return; // Exit if the Ghar cancels
     }
     try {
       const response = await axios.delete(
-        BASE_URL + `/api/users/deleteAdminUser/${id}`
+        BASE_URL + `/api/ghar/deleteGhar/${id}`
       );
       if (response.status === 200) {
-        alert("User deleted successfully");
+        alert("Ghar deleted successfully");
         setData(data.filter((item) => item._id !== id));
       }
     } catch (err) {
       console.error(err);
     }
   };
-  const handleUpdate = (userData) => {
+  const handleUpdate = (gharData) => {
     const confirmUpdate = window.confirm(
       "Are you sure you want to update this USER?"
     );
     if (!confirmUpdate) {
-      return; // Exit if the user cancels
+      return; // Exit if the Ghar cancels
     }
-    navigate("/users/newUser", { state: { user: userData } }); // Pass user data to NewUser
+    navigate("/ghar/newGhar", { state: { ghar: gharData } }); // Pass user data to NewGhar
   };
 
-  const userListColumns = [
+  const gharListColumns = [
     { field: "_id", headerName: "ID", width: 70 },
     {
       field: "villageImage",
-      headerName: "User",
+      headerName: "Ghar",
       width: 230,
       renderCell: (params) => {
         return (
@@ -97,7 +96,7 @@ const UserTable = () => {
       renderCell: (params) => {
         return (
           <div className="cellAction">
-            <Link to="/users/newUser" style={{ textDecoration: "none" }}>
+            <Link to="/ghar/newGhar" style={{ textDecoration: "none" }}>
               <div className="viewButton">Add</div>
             </Link>
             <div
@@ -121,15 +120,15 @@ const UserTable = () => {
   return (
     <div className="datatable">
       <div className="datatableTitle">
-        List Of Users
-        <Link to="/users/newUser" className="link">
+        List Of Homes
+        <Link to="/ghar/newGhar" className="link">
           Add New
         </Link>
       </div>
       <DataGrid
         className="datagrid"
         rows={data}
-        columns={userListColumns.concat(actionColumn)}
+        columns={gharListColumns.concat(actionColumn)}
         pageSize={5}
         rowsPerPageOptions={[5]}
         checkboxSelection
@@ -139,4 +138,4 @@ const UserTable = () => {
   );
 };
 
-export default UserTable;
+export default GharTable;

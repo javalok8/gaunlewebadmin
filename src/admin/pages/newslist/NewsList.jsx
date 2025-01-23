@@ -1,18 +1,18 @@
-import "./userList.scss";
+import "./newsList.scss";
 import Sidebar from "../../components/sidebar/Sidebar";
 import Navbar from "../../components/navbar/Navbar";
-import UserTable from "../usertable/UserTable";
+import NewsTable from "../newstable/NewsTable";
 
-const UserList = () => {
+const NewsList = () => {
   return (
     <div className="list">
       <Sidebar />
       <div className="listContainer">
         <Navbar />
-        <UserTable />
+        <NewsTable />
       </div>
     </div>
   );
 };
 
-export default UserList;
+export default NewsList;

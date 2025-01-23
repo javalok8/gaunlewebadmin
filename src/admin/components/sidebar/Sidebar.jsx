@@ -3,6 +3,7 @@ import DashboardIcon from "@mui/icons-material/Dashboard";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import NewspaperIcon from "@mui/icons-material/Newspaper";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
+import AddHomeIcon from "@mui/icons-material/AddHome";
 import CreditCardIcon from "@mui/icons-material/CreditCard";
 import StoreIcon from "@mui/icons-material/Store";
 import InsertChartIcon from "@mui/icons-material/InsertChart";
@@ -44,6 +45,12 @@ const Sidebar = () => {
             <li>
               <NewspaperIcon className="icon" />
               <span>News</span>
+            </li>
+          </Link>
+          <Link to="/ghar" style={{ textDecoration: "none" }}>
+            <li>
+              <AddHomeIcon className="icon" />
+              <span>HomeStay</span>
             </li>
           </Link>
           <Link to="/products" style={{ textDecoration: "none" }}>

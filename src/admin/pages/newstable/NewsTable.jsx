@@ -1,91 +1,90 @@
-import "./userTable.scss";
+import "./newsTable.scss";
 import { DataGrid } from "@mui/x-data-grid";
-// import { userListColumns, userListRows } from "../../../dataTableSource";
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
-const UserTable = () => {
+const NewsTable = () => {
   const BASE_URL = process.env.REACT_APP_BASE_URL;
   const navigate = useNavigate();
   const [data, setData] = useState([]);
 
-  // Fetch all users
+  // Fetch all news
   useEffect(() => {
-    const fetchUsers = async () => {
+    const fetchNews = async () => {
       try {
-        const res = await axios.get(BASE_URL + "/api/users/findAllAdminUser");
+        const res = await axios.get(BASE_URL + "/api/news/findAllNews");
 
         setData(res.data);
       } catch (err) {
         console.error(err);
       }
     };
-    fetchUsers();
+    fetchNews();
   }, []);
 
   const handleDelete = async (id) => {
     const confirmDelete = window.confirm(
-      "Are you sure you want to delete this USER?"
+      "Are you sure you want to delete this NEWS?"
     );
     if (!confirmDelete) {
       return; // Exit if the user cancels
     }
     try {
       const response = await axios.delete(
-        BASE_URL + `/api/users/deleteAdminUser/${id}`
+        BASE_URL + `/api/news/deleteNews/${id}`
       );
       if (response.status === 200) {
-        alert("User deleted successfully");
+        alert("News deleted successfully");
         setData(data.filter((item) => item._id !== id));
       }
     } catch (err) {
       console.error(err);
     }
   };
-  const handleUpdate = (userData) => {
+  const handleUpdate = (newsData) => {
     const confirmUpdate = window.confirm(
-      "Are you sure you want to update this USER?"
+      "Are you sure you want to update this NEWS?"
     );
     if (!confirmUpdate) {
       return; // Exit if the user cancels
     }
-    navigate("/users/newUser", { state: { user: userData } }); // Pass user data to NewUser
+    navigate("/news/newsNew", { state: { news: newsData } }); // Pass user data to NewUser
   };
 
-  const userListColumns = [
+  const newsListColumns = [
     { field: "_id", headerName: "ID", width: 70 },
     {
-      field: "villageImage",
-      headerName: "User",
-      width: 230,
+      field: "newsImage",
+      headerName: "Images",
+      width: 200,
       renderCell: (params) => {
         return (
           <div className="cellWithImg">
             <img
               className="cellImg"
-              src={`${BASE_URL}${params.row.villageImage}`}
+              src={`${BASE_URL}${params.row.newsImage}`}
               alt="avatar"
             />
-            {params.row.villageName}
+            {/* {params.row.newsTitle} */}
           </div>
         );
       },
     },
     {
-      field: "clubName",
-      headerName: "Club Name",
-      width: 250,
+      field: "newsCategory",
+      headerName: "Category",
+      width: 140,
     },
     {
-      field: "district",
-      headerName: "District",
-      width: 100,
-    },
-    {
-      field: "palika",
-      headerName: "UM/RM",
+      field: "newsTitle",
+      headerName: "Title",
       width: 200,
+    },
+    {
+      field: "newsDescription",
+      headerName: "Description",
+      width: 300,
     },
   ];
 
@@ -93,11 +92,11 @@ const UserTable = () => {
     {
       field: "action",
       headerName: "Action",
-      width: 200,
+      width: 220,
       renderCell: (params) => {
         return (
           <div className="cellAction">
-            <Link to="/users/newUser" style={{ textDecoration: "none" }}>
+            <Link to="/news/newsNew" style={{ textDecoration: "none" }}>
               <div className="viewButton">Add</div>
             </Link>
             <div
@@ -121,15 +120,15 @@ const UserTable = () => {
   return (
     <div className="datatable">
       <div className="datatableTitle">
-        List Of Users
-        <Link to="/users/newUser" className="link">
-          Add New
+        List Of News
+        <Link to="/news/newsNew" className="link">
+          Add News
         </Link>
       </div>
       <DataGrid
         className="datagrid"
         rows={data}
-        columns={userListColumns.concat(actionColumn)}
+        columns={newsListColumns.concat(actionColumn)}
         pageSize={5}
         rowsPerPageOptions={[5]}
         checkboxSelection
@@ -139,4 +138,4 @@ const UserTable = () => {
   );
 };
 
-export default UserTable;
+export default NewsTable;
