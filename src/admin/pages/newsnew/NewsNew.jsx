@@ -6,26 +6,38 @@ import axios from "axios";
 import { useNavigate, useLocation } from "react-router-dom";
 import ReactQuill from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
+import {
+  TextField,
+  Select,
+  MenuItem,
+  Button,
+  Input,
+  FormHelperText,
+  FormControl,
+  InputLabel,
+  IconButton,
+  Grid,
+  Typography,
+} from "@mui/material";
+import { CloudUpload as CloudUploadIcon } from "@mui/icons-material";
 
 const NewsNew = ({ inputs, title, userId }) => {
   const BASE_URL = process.env.REACT_APP_BASE_URL;
-  const navigate = useNavigate(); // Initialize navigate
+  const navigate = useNavigate();
 
-  const { state } = useLocation(); // Access state passed from navigate
-  const newsData = state?.news || {}; // Extract user data or use an empty object
+  const { state } = useLocation();
+  const newsData = state?.news || {};
 
-  // populate formData with userData if editing
   const [formData, setFormData] = useState({
     userId: newsData.userId || "678eec7e68ead8d7db2f79eb",
     newsTitle: newsData.newsTitle || "",
-    newsCategory: newsData.newsCategory || "",
+    newsCategory: newsData.newsCategory || "All", // Default value set to "All"
     newsDescription: newsData.newsDescription || "",
     newsImage: newsData.newsImage || "",
-    richText: "",
+    richText: newsData.newsDescription || "",
   });
 
   const [newsImage, setNewsImage] = useState(newsData.newsImage || "");
-
   const [errors, setErrors] = useState({});
   const [backEndError, setBackEndError] = useState("");
 
@@ -36,12 +48,10 @@ const NewsNew = ({ inputs, title, userId }) => {
 
   const validateForm = () => {
     const errors = {};
-
     if (!formData.newsTitle) errors.newsTitle = "Title is required.";
     if (!formData.newsCategory) errors.newsCategory = "Category is required.";
     if (!formData.newsDescription)
       errors.newsDescription = "Description is required.";
-
     if (!newsImage) errors.newsImage = "News image is required.";
 
     setErrors(errors);
@@ -49,17 +59,15 @@ const NewsNew = ({ inputs, title, userId }) => {
   };
 
   const handleFileChange = (e) => {
-    console.log("==selected News image: " + e.target.files[0]);
     setNewsImage(e.target.files[0]);
   };
 
   const handleDescriptionInputChange = (content, delta, source, editor) => {
-    // Get plain text from the editor
     const plainText = editor.getText();
     setFormData((prevState) => ({
       ...prevState,
-      newsDescription: plainText.trim(), // Update the newsDescription with plain text
-      richText: content, // Save HTML for ReactQuill
+      newsDescription: plainText.trim(),
+      richText: content,
     }));
   };
 
@@ -67,62 +75,48 @@ const NewsNew = ({ inputs, title, userId }) => {
     e.preventDefault();
     if (!validateForm()) return;
 
-    // Prepare the form data for submission (add images if available)
     const formDataToSubmit = new FormData();
-
     formDataToSubmit.append("userId", formData.userId);
     formDataToSubmit.append("newsTitle", formData.newsTitle);
     formDataToSubmit.append("newsCategory", formData.newsCategory);
     formDataToSubmit.append("newsDescription", formData.newsDescription);
-    // Append files (if available)
     if (newsImage) formDataToSubmit.append("newsImage", newsImage);
 
-    /**
-     *
-     * choosing URL whether to update or add user
-     *
-     */
     const MAIN_URL = newsData._id
       ? `${BASE_URL}/api/news/updateNews/${newsData._id}`
       : `${BASE_URL}/api/news/addNews`;
 
     try {
-      let response = "";
-      if (newsData._id) {
-        response = await axios.put(MAIN_URL, formDataToSubmit, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        });
-      } else {
-        response = await axios.post(MAIN_URL, formDataToSubmit, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        });
-      }
+      const response = newsData._id
+        ? await axios.put(MAIN_URL, formDataToSubmit, {
+            headers: { "Content-Type": "multipart/form-data" },
+          })
+        : await axios.post(MAIN_URL, formDataToSubmit, {
+            headers: { "Content-Type": "multipart/form-data" },
+          });
 
-      if (response.status === 201) {
-        setBackEndError(<font color="green">Success TO ADD DATA.</font>);
+      if (response.status === 201 || response.status === 200) {
+        setBackEndError(
+          <font color="green">
+            {response.status === 201
+              ? "Success TO ADD DATA."
+              : "Success TO UPDATE DATA."}
+          </font>
+        );
         navigate("/news");
-      } else if (response.status === 200) {
-        setBackEndError(<font color="green">Success TO UPDATE DATA.</font>);
-        navigate("/news");
-      } else if (response.status === 401) {
-        //alert or show error message
-        setBackEndError(<font color="red">USER ALREADY EXISTS.</font>);
-      } else if (response.status === 400) {
-        //alert or show error message
-        setBackEndError(<font color="red">ALL THE FIELDS ARE REQUIRED.</font>);
-      } else if (response.status === 402) {
-        //alert or show error message
-        setBackEndError(<font color="red">INVALID USER DATA.</font>);
+      } else {
+        setBackEndError(
+          <font color="red">
+            {response.status === 400
+              ? "ALL THE FIELDS ARE REQUIRED."
+              : "INVALID USER DATA."}
+          </font>
+        );
       }
     } catch (error) {
-      // alert("Failed to submit data there might be issues in Server.");
       setBackEndError(
         <font color="red">
-          Failed to submit data there might be issues in Server.
+          Failed to submit data. There might be issues on the server.
         </font>
       );
     }
@@ -133,95 +127,138 @@ const NewsNew = ({ inputs, title, userId }) => {
       <Sidebar />
       <div className="newNewsContainer">
         <Navbar />
+        <div className="top">
+          <h1>{title}</h1>
+        </div>
         <div className="bottom">
-          <div className="containerNews">
-            <h1>Create a New Post</h1>
-            <form onSubmit={handleSubmit} encType="multipart/form-data">
-              <label htmlFor="file" className="imageLabel">
-                Image:{" "}
+          <form
+            onSubmit={handleSubmit}
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1fr",
+              gap: "1rem",
+              width: "100%",
+            }}
+          >
+            <Grid item xs={6}>
+              <div className="file-upload">
                 <input
+                  accept="image/*"
+                  id="newsImage"
                   type="file"
-                  id="file"
                   name="newsImage"
                   onChange={handleFileChange}
-                  className="icon"
-                  // value={formData.newsImage}
-                  // style={{ display: "none" }}
+                  style={{ display: "none" }}
                 />
-              </label>
+                <label htmlFor="newsImage">
+                  <IconButton color="primary" component="span">
+                    <CloudUploadIcon />
+                  </IconButton>
+                  <Typography variant="body2">Upload Club Logo</Typography>
+                </label>
+                <img
+                  style={{
+                    width: "100px",
+                    height: "100px",
+                    borderRadius: "50%",
+                    objectFit: "cover",
+                    marginTop: "10px",
+                  }}
+                  src={
+                    newsImage
+                      ? newsImage instanceof File
+                        ? URL.createObjectURL(newsImage) // If the image is selected from the computer
+                        : `${BASE_URL}${newsImage}` // If it's an updated image URL
+                      : "https://icon-library.com/images/no-image-icon/no-image-icon-0.jpg" // Default image if no image exists
+                  }
+                  alt="News"
+                />
+              </div>
               {errors.newsImage && (
                 <span className="error-message">{errors.newsImage}</span>
               )}
-
-              <label htmlFor="file" className="imageLabel">
-                Title:{" "}
-                <input
-                  className="titleInput"
-                  type="text"
-                  placeholder="Add Awesome Story"
-                  name="newsTitle"
-                  onChange={handleInputChange}
-                  value={formData.newsTitle}
-                />
-              </label>
-              {errors.newsTitle && (
-                <span className="error-message">{errors.newsTitle}</span>
+            </Grid>
+            {/* <FormControl
+              style={{ width: "50%" }}
+              margin="normal"
+              error={Boolean(errors.newsImage)}
+            >
+              <InputLabel htmlFor="file">Upload Image</InputLabel>
+              <Input
+                type="file"
+                id="file"
+                name="newsImage"
+                onChange={handleFileChange}
+              />
+              {errors.newsImage && (
+                <FormHelperText>{errors.newsImage}</FormHelperText>
               )}
+            </FormControl> */}
 
-              <div className="categorySelect">
-                <label htmlFor="" className="categoryLabel">
-                  Choose a category:
-                </label>
-                <select
-                  name="newsCategory"
-                  id=""
-                  onChange={handleInputChange}
-                  value={formData.newsCategory}
-                  className="select"
-                >
-                  <option value="Select">-Select-</option>
-                  <option value="All">All</option>
-                  <option value="Local">Local</option>
-                  <option value="National">National</option>
-                  <option value="International">International</option>
-                </select>
-                {errors.newsCategory && (
-                  <span className="error-message">{errors.newsCategory}</span>
-                )}
-              </div>
-              <div className="editorContainer">
-                <ReactQuill
-                  name="newsDescription"
-                  theme="snow"
-                  className="editor"
-                  onChange={handleDescriptionInputChange}
-                  value={formData.richText}
-                  placeholder="Write your description here..."
-                />
-                {errors.newsDescription && (
-                  <span className="error-message">
-                    {errors.newsDescription}
-                  </span>
-                )}
-              </div>
-              <span className="error-message">{backEndError}</span>
-              <button className="submitButton">{"Send"}</button>
-            </form>
-          </div>
-
-          {/* <div className="left">
-            <img
-              src={
-                villageImage
-                  ? villageImage instanceof File
-                    ? URL.createObjectURL(villageImage) // If the image is selected from the computer
-                    : `${BASE_URL}${villageImage}` // If it's an updated image URL
-                  : "https://icon-library.com/images/no-image-icon/no-image-icon-0.jpg" // Default image if no image exists
-              }
-              alt=""
+            <TextField
+              fullWidth
+              margin="normal"
+              label="Title"
+              name="newsTitle"
+              value={formData.newsTitle}
+              onChange={handleInputChange}
+              error={Boolean(errors.newsTitle)}
+              helperText={errors.newsTitle}
+              style={{ minWidth: "600px" }} // Extended TextField length
             />
-            
-          </div> */}
+
+            <FormControl
+              style={{ width: "50%" }}
+              margin="normal"
+              error={Boolean(errors.newsCategory)}
+            >
+              <InputLabel>Category</InputLabel>
+              <Select
+                name="newsCategory"
+                value={formData.newsCategory}
+                onChange={handleInputChange}
+              >
+                <MenuItem value="All">All</MenuItem>
+                <MenuItem value="Local">Local</MenuItem>
+                <MenuItem value="National">National</MenuItem>
+                <MenuItem value="International">International</MenuItem>
+              </Select>
+              {errors.newsCategory && (
+                <FormHelperText>{errors.newsCategory}</FormHelperText>
+              )}
+            </FormControl>
+
+            <ReactQuill
+              name="newsDescription"
+              theme="snow"
+              className="editor"
+              onChange={handleDescriptionInputChange}
+              value={formData.richText}
+              placeholder="Write your description here..."
+              style={{
+                height: "250px",
+                width: "100%",
+                boxSizing: "border-box",
+              }}
+            />
+            {errors.newsDescription && (
+              <span className="error-message">{errors.newsDescription}</span>
+            )}
+
+            <span className="error-message">{backEndError}</span>
+
+            {/* Space between editor and button */}
+            <div style={{ marginTop: "1rem" }}>
+              <Button
+                variant="contained"
+                color="primary"
+                type="submit"
+                className="submitButton"
+              >
+                Submit
+              </Button>
+            </div>
+          </form>
         </div>
       </div>
     </div>

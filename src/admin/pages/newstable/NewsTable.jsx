@@ -3,18 +3,30 @@ import { DataGrid } from "@mui/x-data-grid";
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import {
+  Button,
+  IconButton,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Grid,
+  Typography,
+} from "@mui/material";
+import { Delete, Edit, Add } from "@mui/icons-material";
 
 const NewsTable = () => {
   const BASE_URL = process.env.REACT_APP_BASE_URL;
   const navigate = useNavigate();
   const [data, setData] = useState([]);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [selectedNews, setSelectedNews] = useState(null);
 
   // Fetch all news
   useEffect(() => {
     const fetchNews = async () => {
       try {
         const res = await axios.get(BASE_URL + "/api/news/findAllNews");
-
         setData(res.data);
       } catch (err) {
         console.error(err);
@@ -24,52 +36,37 @@ const NewsTable = () => {
   }, []);
 
   const handleDelete = async (id) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this NEWS?"
-    );
-    if (!confirmDelete) {
-      return; // Exit if the user cancels
-    }
     try {
       const response = await axios.delete(
         BASE_URL + `/api/news/deleteNews/${id}`
       );
       if (response.status === 200) {
-        alert("News deleted successfully");
         setData(data.filter((item) => item._id !== id));
       }
     } catch (err) {
       console.error(err);
     }
   };
+
   const handleUpdate = (newsData) => {
-    const confirmUpdate = window.confirm(
-      "Are you sure you want to update this NEWS?"
-    );
-    if (!confirmUpdate) {
-      return; // Exit if the user cancels
-    }
-    navigate("/news/newsNew", { state: { news: newsData } }); // Pass user data to NewUser
+    navigate("/news/newsNew", { state: { news: newsData } });
   };
 
   const newsListColumns = [
     { field: "_id", headerName: "ID", width: 70 },
     {
       field: "newsImage",
-      headerName: "Images",
+      headerName: "Image",
       width: 200,
-      renderCell: (params) => {
-        return (
-          <div className="cellWithImg">
-            <img
-              className="cellImg"
-              src={`${BASE_URL}${params.row.newsImage}`}
-              alt="avatar"
-            />
-            {/* {params.row.newsTitle} */}
-          </div>
-        );
-      },
+      renderCell: (params) => (
+        <div className="cellWithImg">
+          <img
+            className="cellImg"
+            src={`${BASE_URL}${params.row.newsImage}`}
+            alt="avatar"
+          />
+        </div>
+      ),
     },
     {
       field: "newsCategory",
@@ -91,49 +88,90 @@ const NewsTable = () => {
   const actionColumn = [
     {
       field: "action",
-      headerName: "Action",
+      headerName: "Actions",
       width: 220,
       renderCell: (params) => {
         return (
           <div className="cellAction">
-            <Link to="/news/newsNew" style={{ textDecoration: "none" }}>
-              <div className="viewButton">Add</div>
-            </Link>
-            <div
-              className="viewButton"
-              onClick={() => handleUpdate(params.row)} // Pass row data
+            <IconButton color="primary" aria-label="add">
+              <Link to="/news/newsNew" style={{ textDecoration: "none" }}>
+                <Add />
+              </Link>
+            </IconButton>
+            <IconButton
+              onClick={() => handleUpdate(params.row)}
+              color="primary"
+              aria-label="update"
             >
-              Update
-            </div>
-            <div
-              className="deleteButton"
-              onClick={() => handleDelete(params.row._id)}
+              <Edit />
+            </IconButton>
+
+            <IconButton
+              onClick={() => {
+                setSelectedNews(params.row);
+                setOpenDialog(true);
+              }}
+              color="error"
+              aria-label="delete"
             >
-              Delete
-            </div>
+              <Delete />
+            </IconButton>
           </div>
         );
       },
     },
   ];
 
+  const handleDialogClose = () => {
+    setOpenDialog(false);
+    setSelectedNews(null);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (selectedNews) {
+      await handleDelete(selectedNews._id);
+      setOpenDialog(false);
+    }
+  };
+
   return (
     <div className="datatable">
       <div className="datatableTitle">
-        List Of News
-        <Link to="/news/newsNew" className="link">
-          Add News
+        <Typography variant="h5" gutterBottom>
+          List Of News
+        </Typography>
+        <Link to="/news/newsNew">
+          <Button variant="contained" color="primary">
+            Add News
+          </Button>
         </Link>
       </div>
-      <DataGrid
-        className="datagrid"
-        rows={data}
-        columns={newsListColumns.concat(actionColumn)}
-        pageSize={5}
-        rowsPerPageOptions={[5]}
-        checkboxSelection
-        getRowId={(row) => row._id}
-      />
+      <Grid container justifyContent="center">
+        <DataGrid
+          className="datagrid"
+          rows={data}
+          columns={newsListColumns.concat(actionColumn)}
+          pageSize={5}
+          rowsPerPageOptions={[5]}
+          checkboxSelection
+          getRowId={(row) => row._id}
+        />
+      </Grid>
+
+      <Dialog open={openDialog} onClose={handleDialogClose}>
+        <DialogTitle>Delete Confirmation</DialogTitle>
+        <DialogContent>
+          <Typography>Are you sure you want to delete this News?</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDialogClose} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleConfirmDelete} color="error">
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };

@@ -4,11 +4,25 @@ import { DataGrid } from "@mui/x-data-grid";
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import {
+  Button,
+  IconButton,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Grid,
+  Typography,
+} from "@mui/material";
+import { Delete, Edit, Add } from "@mui/icons-material";
 
 const UserTable = () => {
   const BASE_URL = process.env.REACT_APP_BASE_URL;
   const navigate = useNavigate();
   const [data, setData] = useState([]);
+
+  const [openDialog, setOpenDialog] = useState(false);
+  const [selectedUsers, setSelectedUsers] = useState(null);
 
   // Fetch all users
   useEffect(() => {
@@ -25,18 +39,11 @@ const UserTable = () => {
   }, []);
 
   const handleDelete = async (id) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this USER?"
-    );
-    if (!confirmDelete) {
-      return; // Exit if the user cancels
-    }
     try {
       const response = await axios.delete(
         BASE_URL + `/api/users/deleteAdminUser/${id}`
       );
       if (response.status === 200) {
-        alert("User deleted successfully");
         setData(data.filter((item) => item._id !== id));
       }
     } catch (err) {
@@ -44,12 +51,6 @@ const UserTable = () => {
     }
   };
   const handleUpdate = (userData) => {
-    const confirmUpdate = window.confirm(
-      "Are you sure you want to update this USER?"
-    );
-    if (!confirmUpdate) {
-      return; // Exit if the user cancels
-    }
     navigate("/users/newUser", { state: { user: userData } }); // Pass user data to NewUser
   };
 
@@ -88,7 +89,6 @@ const UserTable = () => {
       width: 200,
     },
   ];
-
   const actionColumn = [
     {
       field: "action",
@@ -97,44 +97,85 @@ const UserTable = () => {
       renderCell: (params) => {
         return (
           <div className="cellAction">
-            <Link to="/users/newUser" style={{ textDecoration: "none" }}>
-              <div className="viewButton">Add</div>
-            </Link>
-            <div
-              className="viewButton"
-              onClick={() => handleUpdate(params.row)} // Pass row data
+            <IconButton color="primary" aria-label="add">
+              <Link to="/users/newUser" style={{ textDecoration: "none" }}>
+                <Add />
+              </Link>
+            </IconButton>
+            <IconButton
+              onClick={() => handleUpdate(params.row)}
+              color="primary"
+              aria-label="update"
             >
-              Update
-            </div>
-            <div
-              className="deleteButton"
-              onClick={() => handleDelete(params.row._id)}
+              <Edit />
+            </IconButton>
+
+            <IconButton
+              onClick={() => {
+                setSelectedUsers(params.row);
+                setOpenDialog(true);
+              }}
+              color="error"
+              aria-label="delete"
             >
-              Delete
-            </div>
+              <Delete />
+            </IconButton>
           </div>
         );
       },
     },
   ];
 
+  const handleDialogClose = () => {
+    setOpenDialog(false);
+    setSelectedUsers(null);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (selectedUsers) {
+      await handleDelete(selectedUsers._id);
+      setOpenDialog(false);
+    }
+  };
+
   return (
     <div className="datatable">
       <div className="datatableTitle">
-        List Of Users
-        <Link to="/users/newUser" className="link">
-          Add New
+        <Typography variant="h5" gutterBottom>
+          List Of Users
+        </Typography>
+        <Link to="/users/newUser">
+          <Button variant="contained" color="primary">
+            Add Users
+          </Button>
         </Link>
       </div>
-      <DataGrid
-        className="datagrid"
-        rows={data}
-        columns={userListColumns.concat(actionColumn)}
-        pageSize={5}
-        rowsPerPageOptions={[5]}
-        checkboxSelection
-        getRowId={(row) => row._id}
-      />
+      <Grid container justifyContent="center">
+        <DataGrid
+          className="datagrid"
+          rows={data}
+          columns={userListColumns.concat(actionColumn)}
+          pageSize={5}
+          rowsPerPageOptions={[5]}
+          checkboxSelection
+          getRowId={(row) => row._id}
+        />
+      </Grid>
+
+      <Dialog open={openDialog} onClose={handleDialogClose}>
+        <DialogTitle>Delete Confirmation</DialogTitle>
+        <DialogContent>
+          <Typography>Are you sure you want to delete this Users?</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDialogClose} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleConfirmDelete} color="error">
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };
