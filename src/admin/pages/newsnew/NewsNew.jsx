@@ -178,22 +178,6 @@ const NewsNew = ({ inputs, title, userId }) => {
                 <span className="error-message">{errors.newsImage}</span>
               )}
             </Grid>
-            {/* <FormControl
-              style={{ width: "50%" }}
-              margin="normal"
-              error={Boolean(errors.newsImage)}
-            >
-              <InputLabel htmlFor="file">Upload Image</InputLabel>
-              <Input
-                type="file"
-                id="file"
-                name="newsImage"
-                onChange={handleFileChange}
-              />
-              {errors.newsImage && (
-                <FormHelperText>{errors.newsImage}</FormHelperText>
-              )}
-            </FormControl> */}
 
             <TextField
               fullWidth
@@ -205,6 +189,7 @@ const NewsNew = ({ inputs, title, userId }) => {
               error={Boolean(errors.newsTitle)}
               helperText={errors.newsTitle}
               style={{ minWidth: "600px" }} // Extended TextField length
+              required
             />
 
             <FormControl

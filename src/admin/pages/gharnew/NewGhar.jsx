@@ -2,121 +2,112 @@ import "./newGhar.scss";
 import Sidebar from "../../components/sidebar/Sidebar";
 import Navbar from "../../components/navbar/Navbar";
 import { useEffect, useState } from "react";
-import data from "../../../data/data";
 import axios from "axios";
 import { useNavigate, useLocation } from "react-router-dom";
-import DriveFolderUploadOutlinedIcon from "@mui/icons-material/DriveFolderUploadOutlined";
-import {
-  Button,
-  TextField,
-  IconButton,
-  InputLabel,
-  Select,
-  MenuItem,
-  Autocomplete,
-} from "@mui/material";
+import { DriveFolderUploadOutlined as UploadIcon } from "@mui/icons-material";
+import { Button, TextField } from "@mui/material";
 
 const NewGhar = ({ inputs, title }) => {
   const BASE_URL = process.env.REACT_APP_BASE_URL;
   const navigate = useNavigate(); // Initialize navigate
 
   const { state } = useLocation(); // Access state passed from navigate
-  const userData = state?.user || {}; // Extract user data or use an empty object
+  const gharData = state?.ghar || {}; // Extract ghar data or use an empty object
 
-  // populate formData with userData if editing
+  // populate formData with gharData if editing
   const [formData, setFormData] = useState({
-    district: userData.district || "",
-    palika: userData.palika || "",
-    wardNo: userData.wardNo || "",
-    villageName: userData.villageName || "",
-    clubName: userData.clubName || "",
-    villageImage: userData.villageImage || "",
-    clubIcon: userData.clubIcon || "",
-    email: userData.email || "",
-    phoneNumber: userData.phoneNumber || "",
-    password: userData.password || "",
-    adminType: userData.adminType || "Admin",
-    address: userData.address || "",
-    editedDate: "",
+    userId: gharData.userId || "678eec7e68ead8d7db2f79eb",
+    homeName: gharData.homeName || "",
+    homePriceLow: gharData.homePriceLow || "",
+    homePriceHigh: gharData.homePriceHigh || "",
+    homeAddress: gharData.homeAddress || "",
+    homePhone: gharData.homePhone || "",
+    homeEmail: gharData.homeEmail || "",
+    homeDescription: gharData.homeDescription || "",
+    homeStars: gharData.homeStars || "5",
+    homeType: gharData.homeType || "", //home stay / Hotel /both
+    // homeStatus: gharData.homeStatus || "", //open/closed
+    homeImages: gharData.homeImages || [],
   });
 
-  const [villageImage, setVillageImage] = useState(userData.villageImage || "");
-  const [clubIcon, setClubIcon] = useState(userData.clubIcon || "");
-
-  useEffect(() => {
-    if (userData.district) {
-      // Populate palikas based on district
-      const district = data.districts.find((d) => d.name === userData.district);
-      setPalikas(district ? district.palikas : []);
-    }
-  }, [userData.district]);
-
-  const [palikas, setPalikas] = useState([]);
+  const [homeImages, setHomeImages] = useState([]);
 
   const [errors, setErrors] = useState({});
   const [backEndError, setBackEndError] = useState("");
 
-  const handleDistrictChange = (e) => {
-    const districtName = e.target.value;
-    setFormData({
-      ...formData,
-      district: districtName, // Update formData directly
-      palika: "", // Clear palika when district changes
-    });
-
-    // Find palikas for the selected district
-    const district = data.districts.find((d) => d.name === districtName);
-    setPalikas(district ? district.palikas : []);
-  };
-
-  const handlePalikaChange = (e) => {
-    const palikaName = e.target.value;
-    setFormData({
-      ...formData,
-      palika: palikaName, // Update palika in formData directly
-    });
-  };
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
-
   const validateForm = () => {
     const errors = {};
 
-    if (!formData.district) errors.district = "District is required.";
-    if (!formData.palika) errors.palika = "UM/RM (Palika) is required.";
-    if (!formData.villageName) errors.villageName = "Village name is required.";
-    if (!/^[a-zA-Z\s]+$/.test(formData.villageName))
-      errors.villageName = "Village name must be a string.";
-    if (!formData.clubName) errors.clubName = "Club name is required.";
-    if (!/^[a-zA-Z\s]+$/.test(formData.clubName))
-      errors.clubName = "Club name must be a string.";
-    if (!formData.wardNo) errors.wardNo = "Ward number is required.";
-    if (!/^\d+$/.test(formData.wardNo))
-      errors.wardNo = "Ward number must be a number.";
+    if (!formData.homeName) errors.homeName = "HomeStay is required.";
+    if (!/^[a-zA-Z\s]+$/.test(formData.homeName))
+      errors.homeName = "HomeStay name must be a string.";
+
+    if (!formData.homePriceLow)
+      errors.homePriceLow = "Lower Price is required.";
+
+    if (!formData.homePriceHigh)
+      errors.homePriceHigh = "Higher Price is required.";
+    if (formData.homePriceLow > formData.homePriceHigh)
+      errors.homePriceHigh = "Higher Price must be greater than Lower Price.";
+
+    if (!formData.homeAddress) errors.homeAddress = "Address is required.";
+
     if (!formData.phoneNumber) errors.phoneNumber = "Phone number is required.";
     if (!/^\d{10}$/.test(formData.phoneNumber))
       errors.phoneNumber = "Phone number must be 10 digits.";
-    if (!formData.email) errors.email = "Email is required.";
-    if (!/\S+@\S+\.\S+/.test(formData.email))
-      errors.email = "Email format is invalid.";
-    if (!villageImage) errors.villageImage = "Village image is required.";
-    if (!clubIcon) errors.clubIcon = "Village logo is required.";
-    if (!formData.address) errors.address = "Address is required.";
+
+    if (!formData.homeEmail) errors.homeEmail = "Email is required.";
+    if (!/\S+@\S+\.\S+/.test(formData.homeEmail))
+      errors.homeEmail = "Email format is invalid.";
+
+    if (!formData.homeDescription)
+      errors.homeDescription = "HomeStay Description is required.";
+    if (!/^[a-zA-Z\s]+$/.test(formData.homeDescription))
+      errors.homeDescription = "HomeStay Description must be a string.";
+
+    if (!formData.homeStars) errors.homeStars = "Stars is required.";
+    if (!/^\d+$/.test(formData.homeStars))
+      errors.homeStars = "Stars must be a number.";
+
+    if (!formData.homeType)
+      errors.homeType = "HomeStay/Hotel/Both is required.";
+
+    if (!formData.homeStatus) errors.homeStatus = "Open/Closed is required.";
+
+    if (homeImages.length === 0)
+      errors.homeImages = "At least one image must be uploaded.";
 
     setErrors(errors);
     return Object.keys(errors).length === 0;
   };
 
-  const handleFileChange = (e) => {
-    console.log("==selected village image: " + e.target.files[0]);
-    setVillageImage(e.target.files[0]);
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
   };
-  const handleFileChangeLogo = (e) => {
-    console.log("==selected club image: " + e.target.files[0]);
-    setClubIcon(e.target.files[0]);
+
+  const handleFileChange = (e) => {
+    const files = Array.from(e.target.files);
+
+    const validImages = files.filter((file) => {
+      if (!file.type.startsWith("image/")) {
+        alert(`File "${file.name}" is not a valid image.`);
+        return false;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        alert(`File "${file.name}" exceeds the 5MB size limit.`);
+        return false;
+      }
+      return true;
+    });
+
+    if (validImages.length > 0) {
+      setFormData({ ...formData, homeImages: validImages });
+
+      // Generate image previews
+      const previews = validImages.map((file) => URL.createObjectURL(file));
+      setHomeImages(previews);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -126,33 +117,32 @@ const NewGhar = ({ inputs, title }) => {
     // Prepare the form data for submission (add images if available)
     const formDataToSubmit = new FormData();
 
-    formDataToSubmit.append("district", formData.district);
-    formDataToSubmit.append("palika", formData.palika);
-    formDataToSubmit.append("wardNo", formData.wardNo);
-    formDataToSubmit.append("villageName", formData.villageName);
-    formDataToSubmit.append("clubName", formData.clubName);
-    formDataToSubmit.append("email", formData.email);
-    formDataToSubmit.append("phoneNumber", formData.phoneNumber);
-    formDataToSubmit.append("password", formData.password);
-    formDataToSubmit.append("adminType", formData.adminType);
-    formDataToSubmit.append("address", formData.address);
-
-    // Append files (if available)
-    if (villageImage) formDataToSubmit.append("villageImage", villageImage);
-    if (clubIcon) formDataToSubmit.append("clubIcon", clubIcon);
+    formDataToSubmit.append("userId", formData.userId);
+    formDataToSubmit.append("homeName", formData.homeName);
+    formDataToSubmit.append("homePriceLow", formData.homePriceLow);
+    formDataToSubmit.append("homePriceHigh", formData.homePriceHigh);
+    formDataToSubmit.append("homeAddress", formData.homeAddress);
+    formDataToSubmit.append("homePhone", formData.homePhone);
+    formDataToSubmit.append("homeEmail", formData.homeEmail);
+    formDataToSubmit.append("homeStars", formData.homeStars);
+    formDataToSubmit.append("homeType", formData.homeType);
+    formDataToSubmit.append("address", formData.homeDescription);
+    formData.homeImages.forEach((file, index) =>
+      formDataToSubmit.append("homeImages", file)
+    );
 
     /**
      *
-     * choosing URL whether to update or add user
+     * choosing URL whether to update or add homeStay
      *
      */
-    const MAIN_URL = userData._id
-      ? `${BASE_URL}/api/users/updateAdminUser/${userData._id}`
-      : `${BASE_URL}/api/users/registerAdminUser`;
+    const MAIN_URL = gharData._id
+      ? `${BASE_URL}/api/ghar/updateGhar/${gharData._id}`
+      : `${BASE_URL}/api/ghar/addGhar`;
 
     try {
       let response = "";
-      if (userData._id) {
+      if (gharData._id) {
         response = await axios.put(MAIN_URL, formDataToSubmit, {
           headers: {
             "Content-Type": "multipart/form-data",
@@ -168,10 +158,10 @@ const NewGhar = ({ inputs, title }) => {
 
       if (response.status === 201) {
         setBackEndError(<font color="green">Success TO ADD DATA.</font>);
-        navigate("/users");
+        navigate("/ghar");
       } else if (response.status === 200) {
         setBackEndError(<font color="green">Success TO UPDATE DATA.</font>);
-        navigate("/users");
+        navigate("/ghar");
       } else if (response.status === 401) {
         //alert or show error message
         setBackEndError(<font color="red">USER ALREADY EXISTS.</font>);
@@ -205,119 +195,200 @@ const NewGhar = ({ inputs, title }) => {
             onSubmit={handleSubmit}
             style={{
               display: "grid",
-              gridTemplateColumns: "1fr 1fr",
+              gridTemplateColumns: "1fr",
               gap: "1rem",
+              width: "100%",
             }}
           >
-            {/* <TextField
-              label="Name"
-              // value={name}
-              // onChange={(e) => setName(e.target.value)}
-              required
-            />
-            <TextField
-              label="Address"
-              //value={address}
-              // onChange={(e) => setAddress(e.target.value)}
-              required
-            />
-            <input
-              accept="image/*"
-              multiple
-              type="file"
-              // onChange={handleImageChange}
-              id="image-upload"
-              style={{ display: "none" }}
-            />
-            <label htmlFor="image-upload">
-              <IconButton
-                color="primary"
-                aria-label="upload pictures"
-                component="span"
+            <div style={{ display: "flex", gap: "16px" }}>
+              <TextField
+                style={{ flex: 3 }}
+                name="homeName"
+                label="HomeStay Name"
+                type="text"
+                value={formData.homeName}
+                onChange={handleChange}
+                error={Boolean(errors.homeName)}
+                helperText={errors.homeName}
+                fullWidth
+                margin="normal"
+                required
+              />
+
+              <TextField
+                style={{ flex: 3 }}
+                name="homeType"
+                label="HomeStay Type"
+                type="text"
+                value={formData.homeType}
+                onChange={handleChange}
+                error={Boolean(errors.homeType)}
+                helperText={errors.homeType}
+                fullWidth
+                margin="normal"
+                required
+              />
+              {/* this label is only for occupy some spaces */}
+              <label style={{ visibility: "hidden", flex: 6 }}></label>
+            </div>
+            <div style={{ display: "flex", gap: "16px" }}>
+              <TextField
+                style={{ flex: 3 }}
+                name="homePriceLow"
+                label="Lowest Price"
+                type="number"
+                value={formData.homePriceLow}
+                onChange={handleChange}
+                error={Boolean(errors.homePriceLow)}
+                helperText={errors.homePriceLow}
+                fullWidth
+                margin="normal"
+                required
+              />
+              {/* Another TextField or empty space for 1/4 size */}
+              <TextField
+                style={{ flex: 3 }}
+                name="homePriceHigh"
+                label="Highest Price"
+                type="number"
+                value={formData.homePriceHigh}
+                onChange={handleChange}
+                error={Boolean(errors.homePriceHigh)}
+                helperText={errors.homePriceHigh}
+                fullWidth
+                margin="normal"
+                required
+              />
+              <label style={{ visibility: "hidden", flex: 6 }}></label>
+            </div>
+
+            <div style={{ display: "flex", gap: "16px" }}>
+              <TextField
+                style={{ flex: 3 }}
+                name="homeAddress"
+                label="HomeStay Address"
+                type="text"
+                value={formData.homeAddress}
+                onChange={handleChange}
+                error={Boolean(errors.homeAddress)}
+                helperText={errors.homeAddress}
+                fullWidth
+                margin="normal"
+                required
+              />
+
+              <TextField
+                style={{ flex: 3 }}
+                name="homeStars"
+                label="HomeStay Stars"
+                type="number"
+                defaultValue={5}
+                value={formData.homeStars}
+                onChange={handleChange}
+                error={Boolean(errors.homeStars)}
+                helperText={errors.homeStars}
+                fullWidth
+                margin="normal"
+                required
+                disabled
+              />
+              {/* this label is only for occupy some spaces */}
+              <label style={{ visibility: "hidden", flex: 6 }}></label>
+            </div>
+            <div style={{ display: "flex", gap: "16px" }}>
+              <TextField
+                style={{ flex: 3 }}
+                name="homeEmail"
+                label="Email"
+                value={formData.homeEmail}
+                onChange={handleChange}
+                error={Boolean(errors.homeEmail)}
+                helperText={errors.homeEmail}
+                fullWidth
+                margin="normal"
+                required
+              />
+
+              <TextField
+                style={{ flex: 3 }}
+                name="homePhone"
+                label="Phone No"
+                value={formData.homePhone}
+                onChange={handleChange}
+                error={Boolean(errors.homePhone)}
+                helperText={errors.homePhone}
+                type="number"
+                fullWidth
+                margin="normal"
+                required
+              />
+              {/* this label is only for occupy some spaces */}
+              <label style={{ visibility: "hidden", flex: 6 }}></label>
+            </div>
+            <div style={{ display: "flex", gap: "16px" }}>
+              <TextField
+                style={{ flex: 6 }}
+                name="homeDescription"
+                label="HomeStay Description"
+                value={formData.homeDescription}
+                onChange={handleChange}
+                multiline
+                rows={4} // Number of rows for the text area
+                fullWidth
+                variant="outlined"
+                error={Boolean(errors.homeDescription)}
+                helperText={errors.homeDescription}
+                margin="normal"
+                required
+              />
+              {/* this label is only for occupy some spaces */}
+              <label style={{ visibility: "hidden", flex: 6 }}></label>
+            </div>
+
+            <div style={{ display: "flex", gap: "16px" }}>
+              <Button
+                variant="outlined"
+                component="label"
+                startIcon={<UploadIcon />}
+                style={{ margin: "10px 0" }}
               >
-                <DriveFolderUploadOutlinedIcon />
-              </IconButton>
-            </label>
-            <TextField
-              label="Name"
-              // value={name}
-              // onChange={(e) => setName(e.target.value)}
-              required
-            />
-            <TextField
-              label="Address"
-              //value={address}
-              // onChange={(e) => setAddress(e.target.value)}
-              required
-            />
-            <input
-              accept="image/*"
-              multiple
-              type="file"
-              // onChange={handleImageChange}
-              id="image-upload"
-              style={{ display: "none" }}
-            />
-            <label htmlFor="image-upload">
-              <IconButton
-                color="primary"
-                aria-label="upload pictures"
-                component="span"
-              >
-                <DriveFolderUploadOutlinedIcon />
-              </IconButton>
-            </label>
-            <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              //value={age}
-              label="Age"
-              // onChange={handleChange}
+                Upload Images
+                <input
+                  id="homeImages"
+                  name="homeImages"
+                  type="file"
+                  multiple
+                  hidden
+                  accept="image/*"
+                  onChange={handleFileChange}
+                />
+              </Button>
+            </div>
+            {errors.homeImages && (
+              <span className="error-message">{errors.homeImages}</span>
+            )}
+            <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+              {homeImages.map((src, index) => (
+                <img
+                  key={index}
+                  src={src}
+                  alt={`Preview ${index + 1}`}
+                  style={{
+                    width: "100px",
+                    height: "100px",
+                    objectFit: "cover",
+                    borderRadius: "5px",
+                  }}
+                />
+              ))}
+            </div>
+
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              style={{ borderRadius: "15px", width: "50%" }}
             >
-              <MenuItem value={10}>Ten</MenuItem>
-              <MenuItem value={20}>Twenty</MenuItem>
-              <MenuItem value={30}>Thirty</MenuItem>
-            </Select>
-            <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              //value={age}
-              label="Age"
-              // onChange={handleChange}
-            >
-              <MenuItem value={10}>Ten</MenuItem>
-              <MenuItem value={20}>Twenty</MenuItem>
-              <MenuItem value={30}>Thirty</MenuItem>
-            </Select>
-            <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              //value={age}
-              label="Age"
-              // onChange={handleChange}
-            >
-              <MenuItem value={10}>Ten</MenuItem>
-              <MenuItem value={20}>Twenty</MenuItem>
-              <MenuItem value={30}>Thirty</MenuItem>
-            </Select>
-            <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              //value={age}
-              label="Age"
-              // onChange={handleChange}
-            >
-              <MenuItem value={10}>Ten</MenuItem>
-              <MenuItem value={20}>Twenty</MenuItem>
-              <MenuItem value={30}>Thirty</MenuItem>
-            </Select> */}
-            <Autocomplete
-              disablePortal
-              //options={top100Films}
-              sx={{ width: 300 }}
-              renderInput={(params) => <TextField {...params} label="Movie" />}
-            />
-            <Button type="submit" variant="contained" color="primary">
               Submit
             </Button>
           </form>

@@ -51,7 +51,9 @@ function App() {
               <Route index element={<GharList />} />
               <Route
                 path="newGhar"
-                element={<NewGhar inputs={newUserInputs} title="Add Home" />}
+                element={
+                  <NewGhar inputs={newUserInputs} title="Add Home Stay" />
+                }
               />
             </Route>
 

@@ -327,10 +327,7 @@ const NewUser = ({ inputs, title }) => {
                   onChange={handleInputChange}
                   error={Boolean(errors.wardNo)}
                   helperText={errors.wardNo}
-                  // style={{
-                  //   width: "300px", // Adjust the width
-                  //   fontSize: "1.5rem", // Adjust the font size
-                  // }}
+                  required
                 />
               </Grid>
 
@@ -342,6 +339,7 @@ const NewUser = ({ inputs, title }) => {
                   onChange={handleInputChange}
                   error={Boolean(errors.villageName)}
                   helperText={errors.villageName}
+                  required
                 />
               </Grid>
 
@@ -353,6 +351,7 @@ const NewUser = ({ inputs, title }) => {
                   onChange={handleInputChange}
                   error={Boolean(errors.clubName)}
                   helperText={errors.clubName}
+                  required
                 />
               </Grid>
 
@@ -364,6 +363,7 @@ const NewUser = ({ inputs, title }) => {
                   onChange={handleInputChange}
                   error={Boolean(errors.email)}
                   helperText={errors.email}
+                  required
                 />
               </Grid>
 
@@ -375,6 +375,7 @@ const NewUser = ({ inputs, title }) => {
                   onChange={handleInputChange}
                   error={Boolean(errors.phoneNumber)}
                   helperText={errors.phoneNumber}
+                  required
                 />
               </Grid>
 
@@ -386,6 +387,7 @@ const NewUser = ({ inputs, title }) => {
                   onChange={handleInputChange}
                   error={Boolean(errors.password)}
                   helperText={errors.password}
+                  required
                 />
               </Grid>
 
@@ -397,6 +399,7 @@ const NewUser = ({ inputs, title }) => {
                   onChange={handleInputChange}
                   error={Boolean(errors.address)}
                   helperText={errors.address}
+                  required
                 />
               </Grid>
 
