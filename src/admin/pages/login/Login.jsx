@@ -3,7 +3,11 @@ import { TextField, Button, Grid, Paper, Typography, Box } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import "./login.scss";
 
+import { setUserId } from "../../../reduxtool/userSlice";
+import { useDispatch } from "react-redux";
+
 const Login = () => {
+  const dispatch = useDispatch();
   const BASE_URL = process.env.REACT_APP_BASE_URL;
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -51,6 +55,7 @@ const Login = () => {
       const data = await response.json();
 
       if (response.ok) {
+        dispatch(setUserId(data._id));
         navigate("/");
       } else {
         setEmailError("");
