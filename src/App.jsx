@@ -14,6 +14,7 @@ import NewsList from "./admin/pages/newslist/NewsList";
 import NewsNew from "./admin/pages/newsnew/NewsNew";
 import GharList from "./admin/pages/gharlist/GharList";
 import NewGhar from "./admin/pages/gharnew/NewGhar";
+import ServiceNew from "./admin/pages/service/ServiceNew";
 
 function App() {
   const { darkMode } = useContext(DarkModeContext);
@@ -49,6 +50,7 @@ function App() {
             {/* HomeStay Routes */}
             <Route path="ghar">
               <Route index element={<GharList />} />
+              <Route path="gharDetail" element={<ServiceNew />} />
               <Route
                 path="newGhar"
                 element={

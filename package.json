@@ -13,6 +13,7 @@
     "cra-template": "1.2.0",
     "imagekitio-react": "^4.2.0",
     "mdb-react-ui-kit": "^9.0.0",
+    "mongoose-sequence": "^6.0.1",
     "react": "^19.0.0",
     "react-circular-progressbar": "^2.1.0",
     "react-dom": "^19.0.0",

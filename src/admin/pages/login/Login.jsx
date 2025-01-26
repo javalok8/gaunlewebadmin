@@ -76,7 +76,7 @@ const Login = () => {
         sm={8}
         md={5}
         component={Paper}
-        elevation={6}
+        elevation={12}
         square
         sx={{ borderRadius: 20 }}
       >
@@ -112,6 +112,7 @@ const Login = () => {
                 borderRadius: "15px",
               },
             }}
+            required
           />
           <TextField
             margin="normal"
@@ -130,15 +131,18 @@ const Login = () => {
                 borderRadius: "15px",
               },
             }}
+            required
           />
           <Button
             variant="contained"
-            fullWidth
             sx={{
-              mt: 3,
-              mb: 2,
+              mt: 1,
+              mb: 1,
               backgroundColor: "#1976d2",
               borderRadius: "25px",
+              padding: "8px 16px", // Adjust padding for size
+              width: "fit-content", // Ensure the button adjusts to its content
+              alignSelf: "center", // Center the button within the parent container
             }}
             onClick={handleLogin}
           >

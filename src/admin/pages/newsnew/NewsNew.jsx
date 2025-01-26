@@ -29,7 +29,7 @@ const NewsNew = ({ inputs, title, userId }) => {
   const newsData = state?.news || {};
 
   const [formData, setFormData] = useState({
-    userId: newsData.userId || "678eec7e68ead8d7db2f79eb",
+    userId: newsData.userId || "679329221c6e1ae582f97eb0",
     newsTitle: newsData.newsTitle || "",
     newsCategory: newsData.newsCategory || "All", // Default value set to "All"
     newsDescription: newsData.newsDescription || "",

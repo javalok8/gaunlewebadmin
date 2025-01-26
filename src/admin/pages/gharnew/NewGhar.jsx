@@ -16,7 +16,7 @@ const NewGhar = ({ inputs, title }) => {
 
   // populate formData with gharData if editing
   const [formData, setFormData] = useState({
-    userId: gharData.userId || "678eec7e68ead8d7db2f79eb",
+    userId: gharData.userId || "679329221c6e1ae582f97eb0",
     homeName: gharData.homeName || "",
     homePriceLow: gharData.homePriceLow || "",
     homePriceHigh: gharData.homePriceHigh || "",
@@ -24,9 +24,8 @@ const NewGhar = ({ inputs, title }) => {
     homePhone: gharData.homePhone || "",
     homeEmail: gharData.homeEmail || "",
     homeDescription: gharData.homeDescription || "",
-    homeStars: gharData.homeStars || "5",
+    homeStars: gharData.homeStars || 5,
     homeType: gharData.homeType || "", //home stay / Hotel /both
-    // homeStatus: gharData.homeStatus || "", //open/closed
     homeImages: gharData.homeImages || [],
   });
 
@@ -52,9 +51,9 @@ const NewGhar = ({ inputs, title }) => {
 
     if (!formData.homeAddress) errors.homeAddress = "Address is required.";
 
-    if (!formData.phoneNumber) errors.phoneNumber = "Phone number is required.";
-    if (!/^\d{10}$/.test(formData.phoneNumber))
-      errors.phoneNumber = "Phone number must be 10 digits.";
+    if (!formData.homePhone) errors.homePhone = "Phone number is required.";
+    if (!/^\d{10}$/.test(formData.homePhone))
+      errors.homePhone = "Phone number must be 10 digits.";
 
     if (!formData.homeEmail) errors.homeEmail = "Email is required.";
     if (!/\S+@\S+\.\S+/.test(formData.homeEmail))
@@ -71,8 +70,6 @@ const NewGhar = ({ inputs, title }) => {
 
     if (!formData.homeType)
       errors.homeType = "HomeStay/Hotel/Both is required.";
-
-    if (!formData.homeStatus) errors.homeStatus = "Open/Closed is required.";
 
     if (homeImages.length === 0)
       errors.homeImages = "At least one image must be uploaded.";
@@ -113,7 +110,6 @@ const NewGhar = ({ inputs, title }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
-
     // Prepare the form data for submission (add images if available)
     const formDataToSubmit = new FormData();
 
@@ -126,7 +122,7 @@ const NewGhar = ({ inputs, title }) => {
     formDataToSubmit.append("homeEmail", formData.homeEmail);
     formDataToSubmit.append("homeStars", formData.homeStars);
     formDataToSubmit.append("homeType", formData.homeType);
-    formDataToSubmit.append("address", formData.homeDescription);
+    formDataToSubmit.append("homeDescription", formData.homeDescription);
     formData.homeImages.forEach((file, index) =>
       formDataToSubmit.append("homeImages", file)
     );
@@ -195,7 +191,6 @@ const NewGhar = ({ inputs, title }) => {
             onSubmit={handleSubmit}
             style={{
               display: "grid",
-              gridTemplateColumns: "1fr",
               gap: "1rem",
               width: "100%",
             }}
@@ -383,6 +378,7 @@ const NewGhar = ({ inputs, title }) => {
               ))}
             </div>
 
+            <span className="error-message">{backEndError}</span>
             <Button
               type="submit"
               variant="contained"

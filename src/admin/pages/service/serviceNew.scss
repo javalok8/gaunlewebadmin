@@ -1,0 +1,124 @@
+.newNews {
+  width: 100%;
+  display: flex;
+
+  .newNewsContainer {
+    flex: 6;
+
+    .error {
+      border: 1px solid red;
+    }
+    .error-message {
+      color: red;
+      font-size: 12px;
+    }
+
+    .top {
+      width: 100%;
+      font-size: 24px;
+      color: gray;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .bottom {
+      -webkit-box-shadow: 2px 4px 10px 1px rgba(0, 0, 0, 0.47);
+      box-shadow: 2px 4px 10px 1px rgba(201, 201, 201, 0.47);
+      padding: 10px;
+      margin: 20px;
+      display: flex;
+
+      h1 {
+        color: lightgray;
+        font-size: 20px;
+      }
+
+      .containerNews {
+        height: calc(100vh - 64px);
+        @media (min-width: 768px) {
+          height: calc(100vh - 80px);
+        }
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+
+        h1 {
+          font-size: 1.25rem;
+          font-weight: 300;
+        }
+
+        form {
+          display: flex;
+          flex-direction: column;
+          gap: 1.5rem;
+          flex: 12;
+          margin-bottom: 1.5rem;
+
+          .imageLabel {
+            font-size: 0.875rem;
+          }
+
+          .titleInput {
+            flex: 1;
+            font-size: 2rem;
+            font-weight: 300;
+            background: transparent;
+            border-radius: 0.75rem;
+            //outline: none;
+          }
+
+          label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+          }
+
+          .categorySelect {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+
+            .categoryLabel {
+              font-size: 0.875rem;
+            }
+
+            .select {
+              padding: 0.5rem;
+              border-radius: 0.75rem;
+              background-color: white;
+              box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+          }
+
+          .editorContainer {
+            display: flex;
+            border-radius: 0.75rem;
+            flex: 1;
+
+            .editor {
+              flex: 1;
+              border-radius: 0.75rem;
+              background-color: white;
+              box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+          }
+
+          .submitButton {
+            background-color: #1e3a8a;
+            color: white;
+            font-weight: 500;
+            border-radius: 0.75rem;
+            margin-top: 2rem;
+            padding: 0.5rem;
+            width: 9rem;
+            &:disabled {
+              background-color: #3b82f6;
+              cursor: not-allowed;
+            }
+          }
+        }
+      }
+    }
+  }
+}

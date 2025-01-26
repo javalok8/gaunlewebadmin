@@ -3,18 +3,33 @@ import { DataGrid } from "@mui/x-data-grid";
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import {
+  Button,
+  IconButton,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Grid,
+  Typography,
+  Tooltip,
+} from "@mui/material";
+import AddTaskIcon from "@mui/icons-material/AddTask";
+import { Add, Edit, Delete } from "@mui/icons-material";
 
 const GharTable = () => {
   const BASE_URL = process.env.REACT_APP_BASE_URL;
   const navigate = useNavigate();
   const [data, setData] = useState([]);
 
+  const [openDialog, setOpenDialog] = useState(false);
+  const [selectedGhar, setSelectedGhar] = useState(null);
+
   // Fetch all Ghar
   useEffect(() => {
     const fetchGhar = async () => {
       try {
         const res = await axios.get(BASE_URL + "/api/ghar/findAllGhar");
-
         setData(res.data);
       } catch (err) {
         console.error(err);
@@ -24,18 +39,11 @@ const GharTable = () => {
   }, []);
 
   const handleDelete = async (id) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this Ghar?"
-    );
-    if (!confirmDelete) {
-      return; // Exit if the Ghar cancels
-    }
     try {
       const response = await axios.delete(
         BASE_URL + `/api/ghar/deleteGhar/${id}`
       );
       if (response.status === 200) {
-        alert("Ghar deleted successfully");
         setData(data.filter((item) => item._id !== id));
       }
     } catch (err) {
@@ -43,19 +51,16 @@ const GharTable = () => {
     }
   };
   const handleUpdate = (gharData) => {
-    const confirmUpdate = window.confirm(
-      "Are you sure you want to update this USER?"
-    );
-    if (!confirmUpdate) {
-      return; // Exit if the Ghar cancels
-    }
     navigate("/ghar/newGhar", { state: { ghar: gharData } }); // Pass user data to NewGhar
+  };
+  const handleAddDetail = (_id) => {
+    navigate("/ghar/gharDetail", { state: { id: _id } }); // Pass user data to NewGhar
   };
 
   const gharListColumns = [
     { field: "_id", headerName: "ID", width: 70 },
     {
-      field: "villageImage",
+      field: "homeType",
       headerName: "Ghar",
       width: 230,
       renderCell: (params) => {
@@ -63,27 +68,32 @@ const GharTable = () => {
           <div className="cellWithImg">
             <img
               className="cellImg"
-              src={`${BASE_URL}${params.row.villageImage}`}
+              src={`${BASE_URL}${params.row.homeImages[0]}`}
               alt="avatar"
             />
-            {params.row.villageName}
+            {params.row.homeType}
           </div>
         );
       },
     },
     {
-      field: "clubName",
-      headerName: "Club Name",
-      width: 250,
+      field: "homeName",
+      headerName: "Home Name",
+      width: 200,
     },
     {
-      field: "district",
-      headerName: "District",
+      field: "homeEmail",
+      headerName: "Email",
       width: 100,
     },
     {
-      field: "palika",
-      headerName: "UM/RM",
+      field: "homePhone",
+      headerName: "Phone",
+      width: 100,
+    },
+    {
+      field: "homeAddress",
+      headerName: "Address",
       width: 200,
     },
   ];
@@ -96,44 +106,94 @@ const GharTable = () => {
       renderCell: (params) => {
         return (
           <div className="cellAction">
-            <Link to="/ghar/newGhar" style={{ textDecoration: "none" }}>
-              <div className="viewButton">Add</div>
-            </Link>
-            <div
-              className="viewButton"
-              onClick={() => handleUpdate(params.row)} // Pass row data
+            <IconButton color="primary" aria-label="addButton">
+              <Link to="/ghar/newGhar">
+                <Add />
+              </Link>
+            </IconButton>
+
+            <IconButton
+              onClick={() => handleUpdate(params.row)}
+              color="primary"
+              aria-label="update"
             >
-              Update
-            </div>
-            <div
-              className="deleteButton"
-              onClick={() => handleDelete(params.row._id)}
+              <Edit />
+            </IconButton>
+            <IconButton
+              onClick={() => {
+                setSelectedGhar(params.row);
+                setOpenDialog(true);
+              }}
+              color="error"
+              aria-label="delete"
             >
-              Delete
-            </div>
+              <Delete />
+            </IconButton>
+
+            <Tooltip title="Add detail" placement="top">
+              <IconButton
+                onClick={() => handleAddDetail(params.row._id)}
+                color="primary"
+                aria-label="update"
+              >
+                <AddTaskIcon />
+              </IconButton>
+            </Tooltip>
           </div>
         );
       },
     },
   ];
 
+  const handleDialogClose = () => {
+    setOpenDialog(false);
+    setSelectedGhar(null);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (selectedGhar) {
+      await handleDelete(selectedGhar._id);
+      setOpenDialog(false);
+    }
+  };
+
   return (
     <div className="datatable">
       <div className="datatableTitle">
-        List Of Homes
-        <Link to="/ghar/newGhar" className="link">
-          Add New
+        <Typography variant="h5" gutterBottom>
+          List Of Ghar
+        </Typography>
+        <Link to="/ghar/newGhar">
+          <Button variant="contained" color="primary">
+            Add Home
+          </Button>
         </Link>
       </div>
-      <DataGrid
-        className="datagrid"
-        rows={data}
-        columns={gharListColumns.concat(actionColumn)}
-        pageSize={5}
-        rowsPerPageOptions={[5]}
-        checkboxSelection
-        getRowId={(row) => row._id}
-      />
+      <Grid container justifyContent="center">
+        <DataGrid
+          className="datagrid"
+          rows={data}
+          columns={gharListColumns.concat(actionColumn)}
+          pageSize={5}
+          rowsPerPageOptions={[5]}
+          checkboxSelection
+          getRowId={(row) => row._id}
+        />
+        <Dialog open={openDialog} onClose={handleDialogClose}>
+          <DialogTitle>Delete Confirmation</DialogTitle>
+          <DialogContent>
+            <Typography>Are you sure you want to delete this Home?</Typography>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleDialogClose} color="primary">
+              Cancel
+            </Button>
+            <Button onClick={handleConfirmDelete} color="error">
+              Delete
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </Grid>
     </div>
   );
 };
