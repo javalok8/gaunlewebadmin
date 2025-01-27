@@ -9,7 +9,7 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { setAdminType } from "../../../reduxtool/userSlice";
+import { setAdminType, setUserId } from "../../../reduxtool/userSlice";
 import { useDispatch } from "react-redux";
 
 const Home = () => {

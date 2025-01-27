@@ -18,6 +18,8 @@ import { DarkModeContext } from "../../../context/darkModeContext";
 import { useContext } from "react";
 
 import { useSelector } from "react-redux";
+import { setAdminType, setUserId } from "../../../reduxtool/userSlice";
+import { useDispatch } from "react-redux";
 
 const Sidebar = () => {
   const { dispatch } = useContext(DarkModeContext);
@@ -33,10 +35,13 @@ const Sidebar = () => {
       <div className="center">
         <ul>
           <p className="title">MAIN</p>
-          <li>
-            <DashboardIcon className="icon" />
-            <span>Dashboard</span>
-          </li>
+          <Link to="/" style={{ textDecoration: "none" }}>
+            <li>
+              <DashboardIcon className="icon" />
+              <span>Dashboard</span>
+            </li>
+          </Link>
+
           <p className="title">LISTS</p>
           {adminType === "Admin" ? (
             <li style={{ pointerEvents: "none", opacity: 0.5 }}>
@@ -104,10 +109,13 @@ const Sidebar = () => {
             <AccountCircleOutlinedIcon className="icon" />
             <span>Profile</span>
           </li>
-          <li>
-            <ExitToAppIcon className="icon" />
-            <span>Logout</span>
-          </li>
+          <Link to="/login" style={{ textDecoration: "none" }}>
+
+            <li>
+              <ExitToAppIcon className="icon" />
+              <span>Logout</span>
+            </li>
+          </Link>
         </ul>
       </div>
       <div className="bottom">
