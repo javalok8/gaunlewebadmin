@@ -17,8 +17,11 @@ import { Link } from "react-router-dom";
 import { DarkModeContext } from "../../../context/darkModeContext";
 import { useContext } from "react";
 
+import { useSelector } from "react-redux";
+
 const Sidebar = () => {
   const { dispatch } = useContext(DarkModeContext);
+  const adminType = useSelector((state) => state.user.adminType);
   return (
     <div className="sidebar">
       <div className="top">
@@ -35,12 +38,19 @@ const Sidebar = () => {
             <span>Dashboard</span>
           </li>
           <p className="title">LISTS</p>
-          <Link to="/users" style={{ textDecoration: "none" }}>
-            <li>
+          {adminType === "Admin" ? (
+            <li style={{ pointerEvents: "none", opacity: 0.5 }}>
               <PersonOutlineIcon className="icon" />
               <span>Users</span>
             </li>
-          </Link>
+          ) : (
+            <Link to="/users" style={{ textDecoration: "none" }}>
+              <li>
+                <PersonOutlineIcon className="icon" />
+                <span>Users</span>
+              </li>
+            </Link>
+          )}
           <Link to="/news" style={{ textDecoration: "none" }}>
             <li>
               <NewspaperIcon className="icon" />

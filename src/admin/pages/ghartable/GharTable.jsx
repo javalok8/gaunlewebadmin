@@ -16,8 +16,11 @@ import {
 } from "@mui/material";
 import AddTaskIcon from "@mui/icons-material/AddTask";
 import { Add, Edit, Delete } from "@mui/icons-material";
+import { useSelector } from "react-redux";
 
 const GharTable = () => {
+  let userId = useSelector((state) => state.user.userId);
+  const adminType = useSelector((state) => state.user.adminType);
   const BASE_URL = process.env.REACT_APP_BASE_URL;
   const navigate = useNavigate();
   const [data, setData] = useState([]);
@@ -25,11 +28,17 @@ const GharTable = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedGhar, setSelectedGhar] = useState(null);
 
+  if (adminType === "sAdmin") {
+    userId = "1";
+  }
+
   // Fetch all Ghar
   useEffect(() => {
     const fetchGhar = async () => {
       try {
-        const res = await axios.get(BASE_URL + "/api/ghar/findAllGhar");
+        const res = await axios.get(
+          BASE_URL + `/api/ghar/findAllGhar/${userId}`
+        );
         setData(res.data);
       } catch (err) {
         console.error(err);

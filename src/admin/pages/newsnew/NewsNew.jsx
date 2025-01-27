@@ -11,7 +11,6 @@ import {
   Select,
   MenuItem,
   Button,
-  Input,
   FormHelperText,
   FormControl,
   InputLabel,
@@ -20,8 +19,10 @@ import {
   Typography,
 } from "@mui/material";
 import { CloudUpload as CloudUploadIcon } from "@mui/icons-material";
+import { useSelector } from "react-redux";
 
-const NewsNew = ({ inputs, title, userId }) => {
+const NewsNew = ({ title }) => {
+  const userIdRedux = useSelector((state) => state.user.userId);
   const BASE_URL = process.env.REACT_APP_BASE_URL;
   const navigate = useNavigate();
 
@@ -29,7 +30,7 @@ const NewsNew = ({ inputs, title, userId }) => {
   const newsData = state?.news || {};
 
   const [formData, setFormData] = useState({
-    userId: newsData.userId || "679329221c6e1ae582f97eb0",
+    userId: newsData.userId || userIdRedux,
     newsTitle: newsData.newsTitle || "",
     newsCategory: newsData.newsCategory || "All", // Default value set to "All"
     newsDescription: newsData.newsDescription || "",
@@ -154,7 +155,7 @@ const NewsNew = ({ inputs, title, userId }) => {
                   <IconButton color="primary" component="span">
                     <CloudUploadIcon />
                   </IconButton>
-                  <Typography variant="body2">Upload Club Logo</Typography>
+                  <Typography variant="body2">Upload News Image</Typography>
                 </label>
                 <img
                   style={{

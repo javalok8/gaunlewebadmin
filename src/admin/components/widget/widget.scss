@@ -31,6 +31,10 @@
       font-size: 12px;
       border-bottom: 1px solid gray;
     }
+    .link:hover {
+      cursor: pointer;
+      color: blue;
+    }
 
     .percentage {
       display: flex;

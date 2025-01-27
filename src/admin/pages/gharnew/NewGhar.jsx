@@ -6,8 +6,10 @@ import axios from "axios";
 import { useNavigate, useLocation } from "react-router-dom";
 import { DriveFolderUploadOutlined as UploadIcon } from "@mui/icons-material";
 import { Button, TextField } from "@mui/material";
+import { useSelector } from "react-redux";
 
 const NewGhar = ({ inputs, title }) => {
+  const userIdRedux = useSelector((state) => state.user.userId);
   const BASE_URL = process.env.REACT_APP_BASE_URL;
   const navigate = useNavigate(); // Initialize navigate
 
@@ -16,7 +18,7 @@ const NewGhar = ({ inputs, title }) => {
 
   // populate formData with gharData if editing
   const [formData, setFormData] = useState({
-    userId: gharData.userId || "679329221c6e1ae582f97eb0",
+    userId: gharData.userId || userIdRedux,
     homeName: gharData.homeName || "",
     homePriceLow: gharData.homePriceLow || "",
     homePriceHigh: gharData.homePriceHigh || "",

@@ -4,6 +4,7 @@ import { DataGrid } from "@mui/x-data-grid";
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { useSelector } from "react-redux";
 import {
   Button,
   IconButton,
@@ -17,6 +18,10 @@ import {
 import { Delete, Edit, Add } from "@mui/icons-material";
 
 const UserTable = () => {
+  //global userId and adminType to controller access
+  const userId = useSelector((state) => state.user.userId);
+  const adminType = useSelector((state) => state.user.adminType);
+
   const BASE_URL = process.env.REACT_APP_BASE_URL;
   const navigate = useNavigate();
   const [data, setData] = useState([]);
@@ -97,29 +102,34 @@ const UserTable = () => {
       renderCell: (params) => {
         return (
           <div className="cellAction">
-            <IconButton color="primary" aria-label="add">
-              <Link to="/users/newUser" style={{ textDecoration: "none" }}>
-                <Add />
-              </Link>
-            </IconButton>
-            <IconButton
-              onClick={() => handleUpdate(params.row)}
-              color="primary"
-              aria-label="update"
-            >
-              <Edit />
-            </IconButton>
-
-            <IconButton
-              onClick={() => {
-                setSelectedUsers(params.row);
-                setOpenDialog(true);
-              }}
-              color="error"
-              aria-label="delete"
-            >
-              <Delete />
-            </IconButton>
+            {adminType !== "Admin" && (
+              <IconButton color="primary" aria-label="add">
+                <Link to="/users/newUser" style={{ textDecoration: "none" }}>
+                  <Add />
+                </Link>
+              </IconButton>
+            )}
+            {adminType !== "Admin" && (
+              <IconButton
+                onClick={() => handleUpdate(params.row)}
+                color="primary"
+                aria-label="update"
+              >
+                <Edit />
+              </IconButton>
+            )}
+            {adminType !== "Admin" && (
+              <IconButton
+                onClick={() => {
+                  setSelectedUsers(params.row);
+                  setOpenDialog(true);
+                }}
+                color="error"
+                aria-label="delete"
+              >
+                <Delete />
+              </IconButton>
+            )}
           </div>
         );
       },
@@ -145,9 +155,11 @@ const UserTable = () => {
           List Of Users
         </Typography>
         <Link to="/users/newUser">
-          <Button variant="contained" color="primary">
-            Add Users
-          </Button>
+          {adminType !== "Admin" && (
+            <Button variant="contained" color="primary">
+              Add Users
+            </Button>
+          )}
         </Link>
       </div>
       <Grid container justifyContent="center">

@@ -9,16 +9,24 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { setAdminType } from "../../../reduxtool/userSlice";
+import { useDispatch } from "react-redux";
 
 const Home = () => {
+  const dispatch = useDispatch();
   const BASE_URL = process.env.REACT_APP_BASE_URL;
   const navigate = useNavigate();
   const userId = useSelector((state) => state.user.userId);
 
-  let countUser;
-  let countNews;
-  let countGhar;
-  let andminType;
+  const [countUser, setCountUser] = useState(0);
+  const [countNews, setCountNews] = useState(0); // Initialize countNews;
+  const [countGhar, setCountGhar] = useState(0); // Initialize countGhar;
+  const [adminTypes, setAdminTypes] = useState(""); // Initialize andminType;
+  const [products, setProducts] = useState(0);
+  const [trecking, setTrecking] = useState(0);
+  const [videos, setVideos] = useState(0);
+
+  dispatch(setAdminType(adminTypes));
 
   useEffect(() => {
     if (!userId) {
@@ -31,27 +39,34 @@ const Home = () => {
       );
 
       if (response.data) {
-        countUser = response.data.countUser;
-        countNews = response.data.countNews;
-        countGhar = response.data.countGhar;
-        andminType = response.data.adminType;
+        setCountUser(response.data.countUser);
+        setCountNews(response.data.countNews);
+        setCountGhar(response.data.countGhar);
+        setAdminTypes(response.data.adminType);
       }
     };
     fetchCounts();
   }, [userId, navigate]);
-
   return (
     <div className="home">
       <Sidebar />
       <div className="homeContainer">
         <Navbar />
         <div className="widgets">
-          <Widget type="user" countValue={countUser} />
-          <Widget type="news" countValue={countNews} />
-          <Widget type="ghar" countValue={countGhar} />
-          <Widget type="order" />
-          <Widget type="earning" />
-          <Widget type="balance" />
+          <Widget type="user" countValue={countUser} linkRoute="/users" />
+          <Widget type="news" countValue={countNews} linkRoute="/news" />
+          <Widget type="ghar" countValue={countGhar} linkRoute="/ghar" />
+          <Widget
+            type="product"
+            countValue={products}
+            linkRoute={"/products"}
+          />
+          <Widget
+            type="trecking"
+            countValue={trecking}
+            linkRoute={"/trecking"}
+          />
+          <Widget type="videos" countValue={videos} linkRoute={"/videos"} />
         </div>
         <div className="charts">
           <Featured />

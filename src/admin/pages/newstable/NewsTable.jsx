@@ -14,19 +14,29 @@ import {
   Typography,
 } from "@mui/material";
 import { Delete, Edit, Add } from "@mui/icons-material";
+import { useSelector } from "react-redux";
 
 const NewsTable = () => {
+  //global userId and adminType to controller access
+  let userId = useSelector((state) => state.user.userId);
+  const adminType = useSelector((state) => state.user.adminType);
   const BASE_URL = process.env.REACT_APP_BASE_URL;
   const navigate = useNavigate();
   const [data, setData] = useState([]);
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedNews, setSelectedNews] = useState(null);
 
+  if (adminType === "sAdmin") {
+    userId = "1";
+  }
+
   // Fetch all news
   useEffect(() => {
     const fetchNews = async () => {
       try {
-        const res = await axios.get(BASE_URL + "/api/news/findAllNews");
+        const res = await axios.get(
+          BASE_URL + `/api/news/findAllNews/${userId}`
+        );
         setData(res.data);
       } catch (err) {
         console.error(err);
